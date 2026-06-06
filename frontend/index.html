@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="REXI - Legal Process Automation Platform for India Mid-Market" />
+    <meta name="theme-color" content="#0F1117" />
+    <title>REXI - Legal Process Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: '#0F1117', light: '#4A4F5C', lighter: '#8B8F9A' },
+                        bg: '#F7F7F5',
+                        card: '#FFFFFF',
+                        border: '#E5E5E5',
+                        danger: '#EF4444',
+                        success: '#22C55E',
+                        warning: '#F59E0B'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-bg text-primary" style="font-family: 'Inter', sans-serif;">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
