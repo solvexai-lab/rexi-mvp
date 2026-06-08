@@ -13,13 +13,22 @@ import difflib
 import re
 
 # Our local semantic similarity (replaces their nli_infer)
-try:
-    from sentence_transformers import SentenceTransformer, util
-    _st_model = SentenceTransformer('all-MiniLM-L6-v2')
-    _ST_AVAILABLE = True
-except Exception:
-    _ST_AVAILABLE = False
-    _st_model = None
+# Lazy-load the model to avoid 400MB+ RAM usage at import time.
+_ST_AVAILABLE = None
+_st_model = None
+
+def _ensure_st_model():
+    global _ST_AVAILABLE, _st_model
+    if _ST_AVAILABLE is not None:
+        return _ST_AVAILABLE
+    try:
+        from sentence_transformers import SentenceTransformer, util
+        _st_model = SentenceTransformer('all-MiniLM-L6-v2')
+        _ST_AVAILABLE = True
+    except Exception:
+        _ST_AVAILABLE = False
+        _st_model = None
+    return _ST_AVAILABLE
 
 
 @dataclass
@@ -86,8 +95,9 @@ class _NLIResult:
 
 
 def _semantic_similarity(a: str, b: str) -> float:
-    if _ST_AVAILABLE and _st_model is not None:
+    if _ensure_st_model() and _st_model is not None:
         try:
+            from sentence_transformers import util
             emb1 = _st_model.encode(a, convert_to_tensor=True)
             emb2 = _st_model.encode(b, convert_to_tensor=True)
             return float(util.cos_sim(emb1, emb2)[0][0])

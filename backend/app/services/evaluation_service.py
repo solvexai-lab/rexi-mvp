@@ -13,10 +13,10 @@ import os
 from typing import Dict, List, Optional
 
 # Lazy imports — these modules make API calls only when evaluate() is called
-_ragas_available = False
-_deepeval_available = False
-_ragas_error = None
-_deepeval_error = None
+_ragas_available: Optional[bool] = None
+_deepeval_available: Optional[bool] = None
+_ragas_error: Optional[str] = None
+_deepeval_error: Optional[str] = None
 
 
 def _check_ragas():
@@ -67,7 +67,7 @@ class EvaluationService:
     def available(self) -> bool:
         _check_ragas()
         _check_deepeval()
-        return _ragas_available or _deepeval_available
+        return bool(_ragas_available or _deepeval_available)
 
     @property
     def status(self) -> Dict:

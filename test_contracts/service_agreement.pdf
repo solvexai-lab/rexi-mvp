@@ -1,0 +1,1080 @@
+
+
+
+
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="base-template" content="atomic-base-layout">
+
+<title>404 Error | Rocket Lawyer</title>
+<meta name="description" content=""/>
+<link rel="canonical" href="https://www.rocketlawyer.com/pagenotfound"/>
+<link hreflang="en" rel="alternate" href="https://www.rocketlawyer.com/pagenotfound"/>
+<link as="style" rel="preload" href="/webfiles/1778799345876/atomic_css/build/o-navbar-logged-out.min.css"/>
+
+<link crossorigin="anonymous" as="font" rel="preload" href="/webfiles/1778799345876/fonts/open-sans-v17-latin-300.woff2" type="font/woff2"/>
+<link crossorigin="anonymous" as="font" rel="preload" href="/webfiles/1778799345876/fonts/open-sans-v17-latin-600.woff2" type="font/woff2"/>
+<link crossorigin="anonymous" as="font" rel="preload" href="/webfiles/1778799345876/fonts/open-sans-v17-latin-700.woff2" type="font/woff2"/>
+
+        <link rel="icon" href="/webfiles/1778799345876/img/favicon/favicon_rocketlawyer.png" type="image/png">
+        <link rel="preload" href="/webfiles/1778799345876/fonts/open-sans-v17-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+        <link rel="preload" href="/webfiles/1778799345876/atomic_css/build/global.min.css" as="style">
+        <link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/global.min.css">
+<link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/o-navbar-logged-out.min.css"/>
+<link as="style" rel="preload" href="/webfiles/1778799345876/atomic_css/build/o-navbar-logged-in.min.css"/>
+<link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/o-navbar-logged-in.min.css"/>
+<link as="style" rel="preload" href="/webfiles/1778799345876/atomic_css/build/o-search-box-section.min.css"/>
+<link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/o-search-box-section.min.css"/>
+<link as="style" rel="preload" href="/webfiles/1778799345876/atomic_css/build/o-find-out-more-section.min.css"/>
+<link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/o-find-out-more-section.min.css"/>
+<link as="style" rel="preload" href="/webfiles/1778799345876/atomic_css/build/o-page-not-found-section.min.css"/>
+<link rel="stylesheet" href="/webfiles/1778799345876/atomic_css/build/o-page-not-found-section.min.css"/>
+
+        <link rel="preconnect" href="https://ajax.googleapis.com">
+        <link rel="dns-prefetch" href="//www.googletagmanager.com">
+        <link rel="dns-prefetch" href="//www.google-analytics.com">
+
+            <script class="optanon-category-C0003">(function (i, s, o, g, r, a, m) {i[r] = i[r] || [], i["abtiming"] = 1 * new Date();a = s.createElement(o),m = s.getElementsByTagName(o)[0]; a.defer = true; a.src = g; m.parentNode.insertBefore(a, m)})(window, document, "script", "https://proxy.csidetm.com/https://try.abtasty.com/c0b597a1fb375b000cdce013e7d3e139.js", "_abtasty");</script>
+
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.defer=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-4X44');</script>
+
+<script>
+(function() {
+const pxAppId = 'xTfdm2W9';
+window._pxCustomAbrDomains = [
+'www.rocketlawyer.com',
+'www.stg.rocketlawyer.com',
+'api.eu.rocketlawyer.com',
+'api.stgeu.rocketlawyer.com',
+'api.rocketlawyer.com',
+'api-sandbox.rocketlawyer.com',
+'localhost'
+];
+const supportedLanguages = ['en-GB', 'en-US', 'es-ES', 'fr-FR', 'nl-NL', 'pt-BR'];
+const language = supportedLanguages.indexOf(document.documentElement.lang) >= 0 ? document.documentElement.lang : 'en-US';
+window._pxSelectedLocale = language;
+window['_pxTranslation'] = {
+'en-GB': [{
+'selector': '#px-form-item-ref-id',
+'text': 'If you have a problem verifying, contact us for assistance at customer@rocketlawyer.co.uk\nReference ID',
+}],
+'en-US': [{
+'selector': '#px-form-item-ref-id',
+'text': 'If you have a problem verifying, contact us for assistance at (877) 881-0947 or support@rocketlawyer.com\nReference ID',
+}],
+'es-ES': [{
+'selector': '#px-form-item-ref-id',
+'text': 'Si tienes un problema para verificar, contactenos para obtener ayuda a cliente@rocketlawyer.es\nReference ID',
+}],
+'fr-FR': [{
+'selector': '#px-form-item-ref-id',
+'text': 'Si vous avez un probl&egrave;me de confirmation, contactez-nous pour obtenir de l&apos;aide &agrave; l&apos;adresse client@rocketlawyer.fr\nReference ID',
+}],
+'nl-NL': [{
+'selector': '#px-form-item-ref-id',
+'text': 'Gaat er hiermee iets niet goed, neem dan contact met ons op via klanten@rocketlawyer.nl of 070 378 9825\nReference ID',
+}],
+'pt-BR': [{
+'selector': '#px-form-item-ref-id',
+'text': 'Se tiver problemas na verifica&ccedil;&atilde;o, entre em contato conosco atrav&eacute;s do e-mail cliente@rocketlawyer.com.br\nReference ID',
+}]
+};
+const messageTexts = {
+'en-GB': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Help us keep you safe</span>Please verify you&apos;re a person real person by pressing and holding the button below',
+'en-US': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Help us keep you safe</span>Please verify you&apos;re a person real person by pressing and holding the button below',
+'es-ES': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Ayúdanos a mantenerte a salvo.</span>Verifica que eres una persona real.',
+'fr-FR': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Aidez-nous &agrave; prot&eacute;ger votre compte.</span>Veuillez confirmer votre identit&eacute;.',
+'nl-NL': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Help ons je gegevens te beschermen.</span>Bevestig je identiteit.',
+'pt-BR': '<span style="display:block;font-weight: bold; font-size: 20px;margin-bottom: 5px">Ajude-nos a mant&ecirc;-lo em seguran&ccedil;a.</span>Por favor, confirme se &eacute; uma pessoa real.'
+};
+window['_PX' + pxAppId] = {
+challenge: {
+translation: {
+// Per our designs we are only overriding this in english
+'en-GB': { 'btn': 'Press & Hold' },
+'en-US': { 'btn': 'Press & Hold' }
+},
+view: {
+borderRadius: 50,
+textColor: '#D68021',
+borderColor: '#D68021',
+borderWidth: 2,
+fillColor: '#D68021'
+},
+context: {
+logoImgSrc: '/app/images/rl-captcha-logo.svg',
+messageColor: '#1A1A26',
+messageText: messageTexts[language],
+messageFontSize: '16px'
+}
+}
+};
+window['PX' + pxAppId + '_asyncInit'] = function(px) {
+px.Events.on('risk', function(risk, name) {
+localStorage.setItem("pxcookie", name + "=" + risk);
+});
+}
+var p = document.getElementsByTagName('script')[0],
+s = document.createElement('script');
+s.defer = true;
+s.src = '/' + pxAppId + '/init.js';
+p.parentNode.insertBefore(s, p);
+}());
+</script>
+
+
+
+
+
+<script
+defer
+id="catchpoint-rum"
+src="https://g.3gl.net/jp/401/latest/InitialLoadScript.js"
+></script>
+<script language="javascript" type="text/javascript">
+function init() {
+window.RProfiler.addInfo('tracepoint', 'rl_web_app', 'bloomreach');
+}
+if (window.RProfiler) {
+init();
+} else {
+window.addEventListener("GlimpseLoaded", init);
+}
+</script>    </head>
+
+    <body id="body">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-4X44"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="mobile-overlay" id="mobileOverlayLoggedOut">
+    <div class="close-wrapper w-clearfix">
+        <span class="close-icon logo" role="img" aria-label="close button">
+<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19L1 1" stroke="#999999" stroke-width="2" stroke-linecap="round"/><path d="M1 19L21 1" stroke="#999999" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+    </div>
+    <div class="account-header">Account</div>
+    <div class="main-menu">
+        <div class="menu-header"><span>Explore</span>
+        </div>
+            <div>
+                        <a href="/legal-documents?click=nav-panel_products" class="mobile-menu-item" data-business-event="CTAClick_MainNav_Products">
+                            Products
+                        </a>
+                        <a href="/ask-a-legal-pro?click=nav-top_legal-pro-services" class="mobile-menu-item" data-business-event="CTAClick_MainNav_LegalProServices">
+                            Legal Pro Services
+                        </a>
+                        <a href="/group-legal-benefits?click=nav-top_enterprise" class="mobile-menu-item" data-business-event="CTAClick_MainNav_Enterprise">
+                            Enterprise
+                        </a>
+                        <a href="/pricing" class="mobile-menu-item" data-business-event="CTAClick_MainNav_MembershipPricing">
+                            Membership Pricing
+                        </a>
+                        <a href="/contract-review?click=nav-top_contract-review" class="mobile-menu-item" data-business-event="CTAClick_MainNav_ContractReview">
+                            Contract Review
+                                <span class="new-badge bottom center" role="img" aria-label="new badge">
+<svg width="33" height="17" viewBox="0 0 33 17" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y=".286" width="33" height="16" rx="8" fill="#00A68A"/><path d="M11.902 12H9.98L6.873 6.6H6.83c.062.953.093 1.634.093 2.04V12H5.569V4.861h1.91l3.1 5.347h.034a43.356 43.356 0 0 1-.073-1.968V4.861h1.362V12zm6.038 0h-4.11V4.861h4.11v1.24h-2.597V7.67h2.417v1.24h-2.417v1.841h2.597V12zm8.573 0h-1.724l-.967-3.75a19.705 19.705 0 0 1-.185-.825 9.924 9.924 0 0 1-.147-.845c-.02.176-.068.46-.146.85-.078.387-.139.664-.18.83L22.2 12h-1.719l-1.82-7.139h1.488l.914 3.897c.159.72.274 1.343.346 1.87.02-.186.064-.472.132-.86a9.97 9.97 0 0 1 .2-.908l1.04-3.999h1.43l1.04 4c.047.178.104.452.172.82.068.368.12.683.156.947.033-.254.085-.57.156-.947.072-.381.137-.689.196-.923l.908-3.897h1.49L26.512 12z" fill="#fff"/></svg>                                </span>
+                        </a>
+            </div>
+    </div>
+    <div class="get-app-title mobile-overlay-label">
+Get our app    </div>
+    <div class="download-app">
+        <a href="https://apps.apple.com/us/app/rocket-lawyer-easy-legal-help/id605512447"><div class="app-store"></div></a>
+        <a href="https://play.google.com/store/apps/details?id=com.rocketlawyer.mobile.android"><div class="play-store"></div></a>
+    </div>
+    <span class="account-label mobile-overlay-label">Account</span>
+    <a class="primary" href="/login-register.rl#/register?hd=navreg">Start free trial</a>
+    <a class="secondary" href="/login-register.rl#/login?hd=navreg">Log in</a>
+</div>
+<div class="mobile-helper-overlay">
+    <div class="close-wrapper w-clearfix">
+        <span class="close-icon logo" role="img" aria-label="close button">
+<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19L1 1" stroke="#999999" stroke-width="2" stroke-linecap="round"/><path d="M1 19L21 1" stroke="#999999" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+    </div>
+    <div class="main-menu">
+        <div class="menu-header"><span>Help</span></div>
+        <a href="/help" onclick="???header.help1.onclick???" class="menu-acc-btn">See our FAQs</a>
+        <a href="/contact-us" onclick="???header.help2.onclick???" class="menu-acc-btn">Send an email</a>
+        <button onclick="window.open('https://rlus.my.salesforce-sites.com/Prechat/apex/PreChat?endpoint=https%3A%2F%2Frlus.my.salesforce-sites.com%2FPrechat%2Fapex%2FPreChat_CustomMessages%3Flanguage%3D%23deployment_id%3D57232000000CavY%26org_id%3D00D60000000IWzK%26button_id%3D57332000000Cb3T%26session_id%3D47ec3ac0-4d80-4540-b50d-501568cbad57', 'newwindow', 'width=400, height=650');return false;" class="menu-acc-btn menu-dropdown-btn">Chat online</button>
+        <a href="tel:+8778810947" onclick="???header.help4.onclick???" class="menu-acc-btn">Call (877) 881-0947</a>
+    </div>
+</div>
+<div class="navbar-container">
+
+
+
+
+
+
+
+
+<header id="loggedInHeader" style="display: none;">
+    <div class="navbar-container-logged-in">
+        <div class="item brand-wrapper">
+            <a href="/activities" class="brand"></a>
+        </div>
+        <div class="item">
+            <nav class="nav-menu">
+                <div class="menu-container help">
+                    <button class="nav-button btn-help">
+                        <span class="label">Help</span>
+                    </button>
+                    <ul class="menu-links">
+                        <li class="link-item"><a class="link" href="/help?click=nav-help_see-our-faqs">See our FAQs</a></li>
+                        <li class="link-item"><a class="link" href="/contact-us?click=nav-help_send-an-email">Send an email</a></li>
+                        <li class="link-item"><a class="link" href="tel:+1877881094">Call us: (877) 881-0947</a></li>
+                    </ul>
+                </div>
+                <div class="menu-container account">
+                    <button class="nav-button btn-account">
+                        <span class="avatar-name"></span>
+                        <span id="avatarImage" class="avatar"></span>
+                    </button>
+                    <ul class="menu-links">
+                        <li class="link-item dashboard"><a class="link icon" href="/app.rl/">Home</a></li>
+                        <li class="link-item member-benefits"><a class="link icon" href="/app.rl/member-benefits">Member benefits</a></li>
+                        <li class="link-item account-setting"><a class="link icon" href="/app.rl#/account-settings">Member settings</a></li>
+                        <li id="btnLogOut" class="link-item sign-out"><span class="link icon">Sign out</span></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+
+
+    <header class="main-header" id="loggedOutHeader">
+        <div class="brand-wrapper">
+            <a aria-label="Link to Rocket Lawyer homepage" class="brand" href="/" data-business-event="CTAClick_MainNav_RocketLawyer">
+                <span style="display: none">Logo</span>
+                <span class="logo" role="img" aria-label="Rocket Lawyer logo">
+<svg width="167" height="14" viewBox="0 0 167 14" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip20)"><path d="M0 0H8.8C10.8 0 12.2 0.5 13.1 1.5C13.9 2.3 14.3 3.3 14.3 4.6C14.3 6.7 13.2 8 11.6 8.7L14.7 13.4H10.5L7.8 9.3H6.2V13.4H2.5V2.2L0 0ZM8.6 6.4C9.8 6.4 10.6 5.8 10.6 4.8C10.6 3.8 9.8 3.2 8.6 3.2H6.2V6.4H8.6ZM15.3 6.7C15.3 3 18.3 0 22.3 0C26.3 0 29.3 3 29.3 6.7C29.3 10.4 26.3 13.4 22.3 13.4C18.2 13.4 15.3 10.4 15.3 6.7ZM25.6 6.7C25.6 4.8 24.2 3.2 22.3 3.2C20.3 3.2 19 4.8 19 6.6C19 8.5 20.4 10.1 22.3 10.1C24.2 10.1 25.6 8.6 25.6 6.7ZM29.9 6.7C29.9 2.9 32.9 0 36.9 0C39.6 0 41.4 1.1 42.5 2.7L39.7 4.8C38.9 3.9 38.1 3.3 36.8 3.3C34.9 3.3 33.6 4.8 33.6 6.7C33.6 8.6 34.9 10.1 36.8 10.1C38.2 10.1 39 9.5 39.8 8.5L42.6 10.4C41.4 12.1 39.7 13.3 36.7 13.3C33 13.4 29.9 10.6 29.9 6.7ZM43.9 0H47.6V5.4L52.1 0H56.4L51.4 5.8L56.6 13.4H52.2L48.9 8.4L47.5 9.9V13.4H43.8V0H43.9ZM57.9 0H68.6V3.2H61.5V5.2H68V8.1H61.6V10.2H68.8V13.3H57.9V0ZM73.3 3.3H69.4V0H80.9V3.3H77V13.4H73.4V3.3H73.3ZM82.7 13.4V0H83.7V12.4H91.6V13.3H82.7V13.4ZM105.2 13.4L103.5 9.7H95.7L94 13.4H93L99.1 0H100L106.2 13.4H105.2ZM99.6 1.1L96.1 8.8H103.1L99.6 1.1ZM120 13.4H119.2L115.4 1.9L111.6 13.4H111L106.3 0H107.4L111.5 11.8L115.2 0H115.9L119.7 11.8L123.7 0H124.7L120 13.4ZM132.5 8.1V13.4H131.5V8.1L126 0H127.2L132.1 7.2L137 0H138.1L132.5 8.1ZM140 13.4V0H149.5V0.9H141V6.1H148.6V7H141V12.4H149.6V13.3H140V13.4ZM161.7 13.4L157.5 7.9H153.1V13.4H152.1V0H157.7C160.6 0 162.4 1.6 162.4 3.8C162.4 6 160.7 7.3 158.5 7.6L162.9 13.3H161.7V13.4ZM161.5 3.8C161.5 2 160.1 0.9 157.7 0.9H153.2V6.9H157.7C159.8 6.9 161.5 5.8 161.5 3.8ZM164.2 12.8C164.2 12.1 164.8 11.5 165.5 11.5C166.2 11.5 166.7 12.1 166.7 12.8C166.7 13.5 166.1 14 165.5 14C164.8 14 164.2 13.4 164.2 12.8ZM166.6 12.8C166.6 12.2 166.1 11.6 165.5 11.6C164.8 11.6 164.4 12.1 164.4 12.8C164.4 13.4 164.9 13.9 165.5 13.9C166.1 13.9 166.6 13.4 166.6 12.8ZM164.9 12H165.5C165.7 12 165.8 12.1 165.9 12.1C166 12.2 166 12.3 166 12.4C166 12.6 165.9 12.7 165.7 12.8L166.1 13.3H165.8L165.5 12.8H165.2V13.3H164.9V12ZM165.5 12.7C165.7 12.7 165.8 12.6 165.8 12.5C165.8 12.4 165.7 12.3 165.5 12.3H165.2V12.7H165.5Z" fill="white"/></g><defs><clipPath id="clip20"><rect width="166.7" height="14" fill="white"/></clipPath></defs></svg>
+                </span>
+            </a>
+        </div>
+        <div class="has-edit-button">
+            <div class="header-links">
+                            <div class="header-item-wrapper">                                 <div class="header-item">
+                                    <a href="/legal-documents?click=nav-panel_products" data-business-event="CTAClick_MainNav_Products">Products</a>
+                                </div>
+                                    <div class="dropdown-panel">
+                                        <div class="subpanel-content">
+                                                <div class="submenu-header make-documents-header">
+                                                    <div class="header-text">Create, review and e-sign personalized documents</div>
+                                                            <div class="submenu-cta primary">  
+                                                                <a href="/legal-documents?click=nav-panel_see-all-documents-button">See all documents</a>
+                                                            </div>
+                                                </div>
+                                                    <div class="submenu-list">
+                                                            <div class="row list-title">
+                                                                Popular legal products
+                                                            </div>
+                                                            <div class="row list-header-row">
+                                                                    <div class="col col-4 list-header">Make & sign documents</div>
+                                                                    <div class="col col-4 list-header">Start & protect your business</div>
+                                                                    <div class="col col-4 list-header">Copilot AI Insights</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                    <div class="col col-4">
+                                                                                    <a href="/business-and-contracts?click=nav-panel_business-and-contracts" class=" text-link">Business and contracts</a>
+                                                                                    <a href="/real-estate?click=nav-panel_real-estate" class=" text-link">Real Estate</a>
+                                                                                    <a href="/family-and-personal?click=nav-panel_family-and-personal" class=" text-link">Family and personal</a>
+                                                                                    <a href="/rocketsign-digital-signatures?click=nav-panel_rocketsign-documents" class=" text-link">RocketSign® Documents</a>
+                                                                                    <a href="/legal-documents?click=nav-panel_see-all-documents" class="bold text-link">See all documents</a>
+                                                                    </div>
+                                                                    <div class="col col-4">
+                                                                                    <a href="/start-a-business?click=nav-panel_business-registration" class=" text-link">Business registration</a>
+                                                                                    <a href="/registered-agent?click=nav-panel_registered-agent-services" class=" text-link">Registered Agent services</a>
+                                                                                    <a href="/trademark?click=nav-panel_trademark-services" class=" text-link">Trademark services</a>
+                                                                                    <a href="/tax?click=nav-top_tax-prep-and-consultations" class=" text-link">Tax prep and consultations</a>
+                                                                                    <a href="/business-legal-services?click=nav-top_business-legal-services" class="bold text-link">Business legal services</a>
+                                                                    </div>
+                                                                    <div class="col col-4">
+                                                                                    <a href="/contract-review?click=nav-panel_review-contracts" class=" text-link">Review contracts</a>
+                                                                                    <a href="/situation/business-contracts?click=nav-panel_get-fast-answers" class=" text-link">Get fast answers</a>
+                                                                                    <a href="/business-name-generator?click=nav-panel_business-name-generator" class=" text-link">Business Name Generator</a>
+                                                                                    <a href="/logo-maker?click=nav-panel_ai-logo-maker" class=" text-link">AI Logo Maker</a>
+                                                                                    <a href="/situation/protect-your-business?click=nav-panel_protect-your-business" class="bold text-link">Protect your business</a>
+                                                                    </div>
+                                                            </div>
+                                                    </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="header-item-wrapper">                                 <div class="header-item">
+                                    <a href="/ask-a-legal-pro?click=nav-top_legal-pro-services" data-business-event="CTAClick_MainNav_LegalProServices">Legal Pro Services</a>
+                                </div>
+                                    <div class="dropdown-panel">
+                                        <div class="subpanel-content">
+                                                <div class="submenu-header ask-a-lawyer-header">
+                                                    <div class="header-text">Ask questions and get answers from a Legal Pro</div>
+                                                            <div class="submenu-cta primary">  
+                                                                <a href="/ask-a-legal-pro?click=nav-panel_ask-your-question">Ask your question</a>
+                                                            </div>
+                                                </div>
+                                                    <div class="submenu-list">
+                                                            <div class="row list-title">
+                                                                Popular legal situations
+                                                            </div>
+                                                            <div class="row list-header-row">
+                                                                    <div class="col col-4 list-header">Business compliance</div>
+                                                                    <div class="col col-4 list-header">Managing contracts</div>
+                                                                    <div class="col col-4 list-header">Protecting your business</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                    <div class="col col-4">
+                                                                                    <a href="/situation/business-compliance-and-filings?click=nav-panel_business-compliance-and-filings" class=" text-link">Business compliance and filings</a>
+                                                                                    <a href="/situation/tax-compliance?click=nav-panel_tax-compliance" class=" text-link">Tax compliance</a>
+                                                                                    <a href="/situation/employment-hiring?click=nav-panel_hiring-compliance" class=" text-link">Hiring compliance</a>
+                                                                                    <a href="/situation/business-taxes?click=nav-panel_employment-compliance" class=" text-link">Employment compliance</a>
+                                                                    </div>
+                                                                    <div class="col col-4">
+                                                                                    <a href="/situation/business-contracts?click=nav-panel_binding-contracts" class=" text-link">Creating binding contracts</a>
+                                                                                    <a href="/situation/contract-audits?click=nav-panel_contract-audits" class=" text-link">Auditing contract terms</a>
+                                                                                    <a href="/situation/contracts-renegotiation?click=nav-panel_contracts-renegotiation" class=" text-link">Renegotiating contracts</a>
+                                                                    </div>
+                                                                    <div class="col col-4">
+                                                                                    <a href="/situation/protect-your-business?click=nav-panel_protect-your-business" class=" text-link">Protect your business</a>
+                                                                                    <a href="/situation/start-your-business?click=nav-panel_start-your-business" class=" text-link">Liability protection</a>
+                                                                                    <a href="/situation/trademark-infringement?click=nav-panel_trademark-infringement" class=" text-link">Trademark infringement</a>
+                                                                    </div>
+                                                            </div>
+                                                    </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="header-item-wrapper">                                 <div class="header-item">
+                                    <a href="/group-legal-benefits?click=nav-top_enterprise" data-business-event="CTAClick_MainNav_Enterprise">Enterprise</a>
+                                </div>
+                                    <div class="dropdown-panel">
+                                        <div class="subpanel-content">
+                                                <div class="submenu-header group-legal-benefits-header small">
+                                                    <div class="header-text">Empower every employee with modern legal benefits</div>
+                                                            <div class="submenu-cta primary">  
+                                                                <a href="/group-legal-benefits?click=nav-panel_request-a-demo">Request a demo</a>
+                                                            </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="header-item-wrapper">                                 <div class="header-item">
+                                    <a href="/pricing" data-business-event="CTAClick_MainNav_MembershipPricing">Membership Pricing</a>
+                                </div>
+                                    <div class="dropdown-panel">
+                                        <div class="subpanel-content">
+                                                <div class="submenu-header">
+                                                    <div class="header-text">Get the legal protection you need to handle any situation</div>
+                                                            <div class="submenu-cta primary">  
+                                                                <a href="/checkout/plans/pricing?click=nav-panel_start-your-free-trial">Start your free trial</a>
+                                                            </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="header-item-wrapper">                                 <div class="header-item">
+                                    <a href="/contract-review?click=nav-top_contract-review" data-business-event="CTAClick_MainNav_ContractReview">Contract Review</a>
+                                        <span class="new-badge bottom center" role="img" aria-label="new badge">
+<svg width="33" height="17" viewBox="0 0 33 17" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y=".286" width="33" height="16" rx="8" fill="#00A68A"/><path d="M11.902 12H9.98L6.873 6.6H6.83c.062.953.093 1.634.093 2.04V12H5.569V4.861h1.91l3.1 5.347h.034a43.356 43.356 0 0 1-.073-1.968V4.861h1.362V12zm6.038 0h-4.11V4.861h4.11v1.24h-2.597V7.67h2.417v1.24h-2.417v1.841h2.597V12zm8.573 0h-1.724l-.967-3.75a19.705 19.705 0 0 1-.185-.825 9.924 9.924 0 0 1-.147-.845c-.02.176-.068.46-.146.85-.078.387-.139.664-.18.83L22.2 12h-1.719l-1.82-7.139h1.488l.914 3.897c.159.72.274 1.343.346 1.87.02-.186.064-.472.132-.86a9.97 9.97 0 0 1 .2-.908l1.04-3.999h1.43l1.04 4c.047.178.104.452.172.82.068.368.12.683.156.947.033-.254.085-.57.156-.947.072-.381.137-.689.196-.923l.908-3.897h1.49L26.512 12z" fill="#fff"/></svg>                                        </span>
+                                </div>
+                                    <div class="dropdown-panel">
+                                        <div class="subpanel-content">
+                                                <div class="submenu-header make-documents-header">
+                                                    <div class="header-text">Upload any contract and get AI insights backed by Legal Pros</div>
+                                                            <div class="submenu-cta primary">  
+                                                                <a href="/contract-review?click=nav-panel_try-rocket-copilot">Try Rocket Copilot</a>
+                                                            </div>
+                                                </div>
+                                        </div>
+                                    </div>
+                            </div>
+            </div>
+        </div>
+        <div class="side-items">
+            <div class="account-collapsed">
+                <span role="img" aria-label="profile avatar">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="60" height="60" style="enable-background:new 0 0 60 60" xml:space="preserve"><style>.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#fff}</style><g id="Page-1"><g id="Rectangle-892-Clipped_1_"><g id="Group"><g id="path-3"><path id="path-7" class="st0" d="M29.9 43.3c-7.3 0-13.3-6-13.3-13.3s5.9-13.3 13.3-13.3 13.3 6 13.3 13.3-6 13.3-13.3 13.3zm0-28.3c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.8-15-15-15z"/></g><g id="Rectangle-892-Clipped" transform="translate(2.885 2.83)"><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="14.9" y="18.2" width="25.4" height="23.1"><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="14.9" y="18.2" width="25.4" height="23.1" id="mask-2_1_"><g style="filter:url(#Adobe_OpacityMaskFilter)"><path id="path-1_1_" class="st0" d="M41.1 27.2c0 7.8-6.3 14.2-14.1 14.2S12.8 35 12.8 27.2 19.2 13 27 13s14.1 6.3 14.1 14.2z"/></g></mask><path id="Rectangle-892" d="M23.6 35.1c0 .7-.6 1.3-1.4 1.5l-3 .4c-2.2.3-4.2 2.3-4.3 4.4h25.4c-.6-2-3-3.8-5.2-4.2l-3.3-.6c-.7-.1-1.4-.8-1.4-1.5v-1.8c.8-.8 1-2.1 1.3-3.5.4.1.6-.4.8-1.4.2-1 1-2.1.3-2.2h-.3l.3-3.4c.1-1.4-.6-3-1.6-3.4-1.6-.6-2.1-1-3.2-1.1-1-.2-2 .1-3.1.4-1.1.3-2 1.1-2.8 1.5-.8.4-1.2 1.4-1.1 2.6l.3 3.4h-.2c-.7.1.1 1.2.3 2.2s.4 1.5.7 1.5c.3 1.4.6 2.6 1.3 3.5v1.7h.2z" style="mask:url(#mask-2_1_);fill-rule:evenodd;clip-rule:evenodd;fill:#fff"/></g></g></g></g></svg>                </span>
+            </div>
+            <div class="account">
+                <a href="/login-register.rl#/login?hd=navreg" class="login secondary">Log in</a>
+                <a href="/login-register.rl#/register?hd=navreg" class="sign-up primary">Start free trial</a>
+            </div>
+            <div class="menu">
+                <button class="menu-button">Menu</button>
+                <span class="badge-point"></span>
+            </div>
+            <div class="help-tablet">
+                <div class="help-background">
+                    <span class="logo" role="img" aria-label="help button">
+<svg width="36" height="28" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M34.7 1.1C34.8 1.1 34.9 1.2 34.9 1.3V21.2C34.9 21.3 34.8 21.4 34.7 21.4H14.3L14.1 21.5L6.3 25.5L7.6 22.9L8.4 21.3H1.3C1.2 21.3 1.1 21.2 1.1 21.1V1.2C1.1 1.1 1.2 1 1.3 1C1.3 1.1 34.7 1.1 34.7 1.1ZM34.7 0H1.3C0.6 0 0 0.5 0 1.2V21.1C0 21.8 0.6 22.4 1.3 22.4H6.6L3.8 27.9L14.6 22.4H34.7C35.4 22.4 36 21.8 36 21.1V1.2C36 0.5 35.4 0 34.7 0Z" fill="white"/></svg>
+Help                    </span>
+                </div>
+            </div>
+            <div class="help-wrapper">
+                <div class="help-background">
+                    <span class="logo" role="img" aria-label="help button">
+<svg width="36" height="28" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M34.7 1.1C34.8 1.1 34.9 1.2 34.9 1.3V21.2C34.9 21.3 34.8 21.4 34.7 21.4H14.3L14.1 21.5L6.3 25.5L7.6 22.9L8.4 21.3H1.3C1.2 21.3 1.1 21.2 1.1 21.1V1.2C1.1 1.1 1.2 1 1.3 1C1.3 1.1 34.7 1.1 34.7 1.1ZM34.7 0H1.3C0.6 0 0 0.5 0 1.2V21.1C0 21.8 0.6 22.4 1.3 22.4H6.6L3.8 27.9L14.6 22.4H34.7C35.4 22.4 36 21.8 36 21.1V1.2C36 0.5 35.4 0 34.7 0Z" fill="white"/></svg>
+Help                    </span>
+                </div>
+                <div class="help-dropdown">
+                    <ul class="unstyled-list">
+                        <li><a href="/help" onclick="???header.help1.onclick???" class="menu-acc-btn">See our FAQs</a></li>
+                        <li><a href="/contact-us" onclick="???header.help2.onclick???" class="menu-acc-btn">Send an email</a></li>
+                        <li><button onclick="window.open('https://rlus.my.salesforce-sites.com/Prechat/apex/PreChat?endpoint=https%3A%2F%2Frlus.my.salesforce-sites.com%2FPrechat%2Fapex%2FPreChat_CustomMessages%3Flanguage%3D%23deployment_id%3D57232000000CavY%26org_id%3D00D60000000IWzK%26button_id%3D57332000000Cb3T%26session_id%3D47ec3ac0-4d80-4540-b50d-501568cbad57', 'newwindow', 'width=400, height=650');return false;" class="menu-acc-btn menu-dropdown-btn">Chat online</button></li>
+                        <li><a href="tel:+8778810947" onclick="???header.help4.onclick???" class="menu-acc-btn">Call (877) 881-0947</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="search">
+                <a aria-label="Click to open search field or submit query" href="#">
+                    <span class="search" role="img" aria-label="search button">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18.8 16.1C19.5 16.9 19.5 18.1 18.8 18.8C18 19.5 16.9 19.5 16.1 18.8L12.7 15.4L12.6 15.3C12.5 15.3 12.5 15.4 12.4 15.4C8.49999 17.7 3.39999 16.3 1.19999 12.4C-1.10001 8.49999 0.299986 3.39999 4.19999 1.19999C8.09999 -1.10001 13.2 0.299986 15.4 4.19999C16.9 6.79999 16.9 9.99999 15.3 12.6L15.4 12.7L18.8 16.1ZM13.7 5.09999C12 2.09999 8.19999 0.999987 5.09999 2.69999C2.09999 4.39999 0.999986 8.19999 2.69999 11.3C2.69999 11.3 2.69999 11.4 2.79999 11.4C4.59999 14.4 8.39999 15.4 11.4 13.6C14.3 11.9 15.4 8.09999 13.7 5.09999Z" fill="white"/></svg>
+                    </span>
+                </a>
+            </div>
+        </div>
+        <div class="search-component">
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <input id="navbar_search_input_logged_out" type="text" placeholder="Search for documents and topics" name="query" autocomplete="off" maxlength="59">
+                </div>
+                
+                  <span class="close-search" role="img" aria-label="close button">
+<svg width="22" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19 1 1M1 19 21 1" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+                </span>
+            </div>
+            <ul class="search-results"></ul>
+        </div>
+    </header>
+</div>
+
+    <main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section id="pageNotFoundSection">
+    <div class="banner-wrapper">
+        <div class="banner-text-wrapper">
+            <h1 class="header">404 ERROR</h1>
+            <p class="title">Oops,</p>
+            <p class="text">This page is out of reach, but legal help is always close by.</p>
+            <a href="/" class="button">Return to Homepage</a>
+        </div>
+
+        <div class="image-wrapper">
+            <img class="image" alt="404 error" src="/binaries/content/gallery/pagenotfound/notfound-72.png"/>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+    <div id="findOutMoreSection">
+        <div>
+                <div class="column">
+                    <div class="icon-wrapper">
+                        <img class="icon" src="/binaries/content/gallery/icons/icon-documents.svg" alt="Unlimited documents & signatures"/>
+                    </div>
+                    <div class="text-wrapper">
+                        <h3 class="title">Unlimited documents & signatures</h3>
+                        <p class="text">Personalize and <a href="/rocketsign-digital-signatures">RocketSign®</a> any <a href="/legal-documents">legal document </a>you need</p>
+                        <p><strong>
+        <a
+            href="#"
+            class=""
+            
+            
+        >
+        </a>
+</strong></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="icon-wrapper">
+                        <img class="icon" src="/binaries/content/gallery/icons/icon-talktoalawyer+1.svg" alt="Ask a Legal Pro"/>
+                    </div>
+                    <div class="text-wrapper">
+                        <h3 class="title">Ask a Legal Pro</h3>
+                        <p class="text"><a href="/ask-a-legal-pro">Get answers to your legal questions</a> or have your documents reviewed by a Legal Pro</p>
+                        <p><strong>
+        <a
+            href="#"
+            class=""
+            
+            
+        >
+        </a>
+</strong></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="icon-wrapper">
+                        <img class="icon" src="/binaries/content/gallery/icons/icon-guide-navigation.svg" alt="Retain a Legal Pro"/>
+                    </div>
+                    <div class="text-wrapper">
+                        <h3 class="title">Retain a Legal Pro</h3>
+                        <p class="text">Get personalized help for more complex legal matters</p>
+                        <p><strong>
+        <a
+            href="#"
+            class=""
+            
+            
+        >
+        </a>
+</strong></p>
+                    </div>
+                </div>
+        </div>
+    </div>
+<div class="categories-search-wrapper">
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="search-box-wrapper-outer" class="">
+        <div class="search-box-wrapper-inner">
+
+                        <h2 class="header">Looking for something else?</h2>
+
+            <div class="search-box">
+                <div class="search-box-input-submit-wrapper">
+                    <input class="search-box-input"
+                           placeholder="Search here to find documents" 
+                           name="query" id="query" autocomplete="off" maxlength="59"/>
+                    <label class="visually-hidden" for="query">Search query input field</label>
+
+                    <input class="search-box-submit" type="submit" name="btnSearch" aria-label="search submit button" value="">
+                </div>
+                <ul class="search-box-results"></ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+    </main>
+
+
+
+
+
+
+
+<footer class="footer-container">
+    <div class="content">
+        <div class="row">
+            <div class="col-12 brand-desktop">
+                <div class="footer-brand-logo-wrapper">
+                    <div class="footer-brand-logo logo-the-wall-street"></div>
+                    <div class="footer-brand-logo logo-atlantic"></div>
+                    <div class="footer-brand-logo logo-media-3"></div>
+                    <div class="footer-brand-logo logo-media-4"></div>
+                    <div class="footer-brand-logo logo-tc"></div>
+                </div>
+            </div>
+            <div class="col-12 brand-tablet">
+                <div class="footer-brand-logo-wrapper first-row">
+                    <div class="footer-brand-logo logo-the-wall-street"></div>
+                    <div class="footer-brand-logo logo-atlantic"></div>
+                    <div class="footer-brand-logo logo-media-3"></div>
+                </div>
+            </div>
+            <div class="col-12 brand-tablet">
+                <div class="footer-brand-logo-wrapper second-row">
+                    <div class="footer-brand-logo logo-media-4"></div>
+                    <div class="footer-brand-logo logo-tc"></div>
+                </div>
+            </div>
+            <div class="col-12 brand-phone">
+                <div class="footer-brand-logo-wrapper first-row">
+                    <div class="footer-brand-logo logo-the-wall-street"></div>
+                    <div class="footer-brand-logo logo-atlantic"></div>
+                </div>
+            </div>
+            <div class="col-12 brand-phone">
+                <div class="footer-brand-logo-wrapper second-row">
+                    <div class="footer-brand-logo logo-media-3"></div>
+                    <div class="footer-brand-logo logo-media-4"></div>
+                    <div class="footer-brand-logo logo-tc"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="separate"></div>
+
+        <div class="row footer-menu">
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+<div>
+                    <span class="footer-menu-title">Rocket Lawyer</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/?click=footer_home" class="text-link" title="Home">
+                                                Home
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/legal-documents?click=footer_legal-documents" class="text-link" title="Legal documents">
+                                                Legal documents
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/rocketsign-digital-signatures?click=footer_sign-documents" class="text-link" title="Sign documents">
+                                                Sign documents
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/contract-review?click=footer_contract-review" class="text-link" title="Contract Review">
+                                                Contract Review
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/tax?click=footer_file-taxes" class="text-link" title="File taxes">
+                                                File taxes
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/ask-a-legal-pro?click=footer_ask-a-legal-pro" class="text-link" title="Connect with a Legal Pro">
+                                                Connect with a Legal Pro
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/pricing" class="text-link" title="Pricing">
+                                                Pricing
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/about-us/the-briefing-room?click=footer_legal-resources" class="text-link" title="The Briefing Room">
+                                                The Briefing Room
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/legal-resources?click=footer_legal-resources" class="text-link" title="Legal resources">
+                                                Legal resources
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/legal-mobile-apps?click=footer_mobile-apps" class="text-link" title="Mobile apps">
+                                                Mobile apps
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/sitemap?click=footer_site-map" class="text-link" title="Site map">
+                                                Site map
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="#onetrust-modal" class="ot-sdk-show-settings text-link" title="Do not sell or share my personal information ">
+                                                Do not sell or share my personal information <svg xmlns='http://www.w3.org/2000/svg ' viewBox='0 0 30 14' xmlns:v='https://vecta.io/nano' height='14px'><g fill-rule='evenodd'><path d='M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7s2.6 5.8 5.8 5.8z' fill='#fff'/><path d='M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8z' fill='#06f'/></g><path d='M24.6 4a.61.61 0 0 1 0 .8h0L22.5 7l2.2 2.2a.61.61 0 0 1 0 .8.61.61 0 0 1-.8 0h0l-2.2-2.2-2.2 2.2a.61.61 0 0 1-.8 0 .61.61 0 0 1 0-.8h0L20.8 7l-2.2-2.2a.61.61 0 0 1 0-.8.61.61 0 0 1 .8 0h0l2.2 2.2L23.8 4a.61.61 0 0 1 .8 0z' fill='#fff'/><path d='M12.7 4.1c.2.2.3.6.1.8h0L8.6 9.8c-.1.1-.2.2-.3.2-.2.1-.5.1-.7-.1h0L5.4 7.7a.61.61 0 0 1 0-.8.61.61 0 0 1 .8 0h0L8 8.6l3.8-4.5c.2-.2.6-.2.9 0z' fill='#06f'/></svg>
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Start & protect your business</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/business-legal-services?click=footer_all-business-services" class="text-link" title="All business services">
+                                                All business services
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/limited-liability-company?click=footer_register-an-llc" class="text-link" title="Register an LLC">
+                                                Register an LLC
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/corporation?click=footer_register-a-corporation" class="text-link" title="Register a Corporation">
+                                                Register a Corporation
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/nonprofit?click=footer_register-a-nonprofit" class="text-link" title="Register a Nonprofit">
+                                                Register a Nonprofit
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/foreign-filing?click=footer_register-a-foreign-entity" class="text-link" title="Register a Foreign Entity">
+                                                Register a Foreign Entity
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/registered-agent?click=footer_get-a-registered-agent" class="text-link" title="Get a Registered Agent">
+                                                Get a Registered Agent
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/employer-identification-number?click=footer_get-a-ein" class="text-link" title="Get a EIN">
+                                                Get a EIN
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/trademark?click=footer_register-a-trademark" class="text-link" title="Register a Trademark">
+                                                Register a Trademark
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/doing-business-as?click=footer_file-a-dba" class="text-link" title="File a DBA">
+                                                File a DBA
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/annual-report?click=footer_file-an-annual-report" class="text-link" title="File an Annual Report">
+                                                File an Annual Report
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/amendment?click=footer_file-articles-of-amendment" class="text-link" title="File Articles of Amendment">
+                                                File Articles of Amendment
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/dissolution?click=footer_file-articles-of-dissolution" class="text-link" title="File Articles of Dissolution">
+                                                File Articles of Dissolution
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/reinstatement?click=footer_reinstate-a-company" class="text-link" title="Reinstate a company">
+                                                Reinstate a company
+                                        </a>
+                                </li>
+                </ul>
+</div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+<div>
+                    <span class="footer-menu-title">Popular business documents</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/business-and-contracts/intellectual-property/confidentiality-agreements/document/non-disclosure-agreement?click=footer_non-disclosure-agreement-nda" class="text-link" title="Non-Disclosure Agreement (NDA)">
+                                                Non-Disclosure Agreement (NDA)
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/business-and-contracts/business-operations/business-partnerships/document/business-contract?click=footer_business-contract" class="text-link" title="Business Contract">
+                                                Business Contract
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/business-and-contracts/business-operations/product-or-service-sales/document/independent-contractor-agreement?click=footer_independent-contractor-agreement" class="text-link" title="Independent Contractor Agreement">
+                                                Independent Contractor Agreement
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/business-and-contracts/starting-a-business/form-an-llc/document/llc-operating-agreement?click=footer_llc-operating-agreement" class="text-link" title="LLC Operating Agreement">
+                                                LLC Operating Agreement
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/business-and-contracts?click=footer_see-more-business-documents" class="text-link" title="See more business documents">
+                                                See more business documents
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Popular real estate documents</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/real-estate/landlords/residential-property/document/lease-agreement?click=footer_lease-agreement" class="text-link" title="Lease Agreement">
+                                                Lease Agreement
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/real-estate/landlords/eviction/document/eviction-notice?click=footer_eviction-notice" class="text-link" title="Eviction Notice">
+                                                Eviction Notice
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/real-estate/home-ownership/buy-or-sell-property/document/intent-to-purchase-real-estate?click=footer_intent-to-purchase-real-estate" class="text-link" title="Intent to Purchase Real Estate">
+                                                Intent to Purchase Real Estate
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/real-estate/home-ownership/transfer-property-title/document/quit-claim-deed?click=footer_quitclaim-deed" class="text-link" title="Quitclaim Deed">
+                                                Quitclaim Deed
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/real-estate?click=footer_see-more-real-estate-documents" class="text-link" title="See more real estate documents">
+                                                See more real estate documents
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Popular family & personal documents</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/family-and-personal/estate-planning/make-a-will/document/last-will-and-testament?click=footer_last-will-and-testament" class="text-link" title="Last Will and Testament">
+                                                Last Will and Testament
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/family-and-personal/health-and-medical/healthcare-decisions/document/living-will?click=footer_living-will" class="text-link" title="Living Will">
+                                                Living Will
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/family-and-personal/family-matters/divorce/document/divorce-settlement-agreement?click=footer_divorce-settlement-agreement" class="text-link" title="Divorce Settlement Agreement">
+                                                Divorce Settlement Agreement
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/family-and-personal/family-matters/childcare-and-elder-care/document/child-care-authorization?click=footer_child-care-authorization" class="text-link" title="Child Care Authorization Form">
+                                                Child Care Authorization Form
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/family-and-personal?click=footer_see-more-family-amp-personal-documents" class="text-link" title="See more family & personal documents">
+                                                See more family & personal documents
+                                        </a>
+                                </li>
+                </ul>
+</div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+<div>
+                    <span class="footer-menu-title">Work with us</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/group-legal-benefits?click=footer_group-legal-benefits" class="text-link" title="Group legal benefits">
+                                                Group legal benefits
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/attorney-network-signup?click=footer_join-our-attorney-network" class="text-link" title="Join our attorney network">
+                                                Join our attorney network
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/about-us/careers?click=footer_careers" class="text-link" title="Careers">
+                                                Careers
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Our Customers</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/customer-stories#join-our-community" class="text-link" title="Join our community">
+                                                Join our community
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/customer-stories" class="text-link" title="Customer stories">
+                                                Customer stories
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Connect with us</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/about-us?click=footer_about-us" class="text-link" title="About us">
+                                                About us
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/about-us/announcements?click=footer_announcements" class="text-link" title="Announcements">
+                                                Announcements
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/about-us/newsroom?click=footer_news" class="text-link" title="News">
+                                                News
+                                        </a>
+                                </li>
+                                <li class="footer-menu-item">
+                                        <a href="/contact-us?click=footer_contact-us" class="text-link" title="Contact us">
+                                                Contact us
+                                        </a>
+                                </li>
+                </ul>
+                <span class="footer-menu-title">Follow us</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="inline-block">
+                                        <a href="https://www.facebook.com/RocketLawyer" class="text-link" title="facebook">
+                                                <div class="social-icon facebook"></div>
+                                        </a>
+                                </li>
+                                <li class="inline-block">
+                                        <a href="https://www.linkedin.com/company/rocket-lawyer-inc" class="text-link" title="linkedin">
+                                                <div class="social-icon linkedin"></div>
+                                        </a>
+                                </li>
+                                <li class="inline-block">
+                                        <a href="https://www.instagram.com/rocketlawyer" class="text-link" title="instagram">
+                                                <div class="social-icon instagram"></div>
+                                        </a>
+                                </li>
+                                <li class="inline-block">
+                                        <a href="https://www.youtube.com/%40RocketLawyer" class="text-link" title="youtube">
+                                                <div class="social-icon youtube"></div>
+                                        </a>
+                                </li>
+                </ul>
+</div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+<div>
+                    <span class="footer-menu-title">Assistance</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="message">
+                                        <button onclick="window.open('https://rlus.my.salesforce-sites.com/Prechat/apex/PreChat?endpoint=https%3A%2F%2Frlus.my.salesforce-sites.com%2FPrechat%2Fapex%2FPreChat_CustomMessages%3Flanguage%3D%23deployment_id%3D57232000000CavY%26org_id%3D00D60000000IWzK%26button_id%3D57332000000Cb3T%26session_id%3D47ec3ac0-4d80-4540-b50d-501568cbad57', 'newwindow', 'width=400, height=650');return false;" class="text">CHAT WITH US &nbsp;&nbsp;〉</button>
+                                </li>
+                </ul>
+                <span class="phone-number">(877) 881-0947</span>
+
+                <ul class="footer-menu-rocket-lawyer">
+                                <li class="footer-menu-item">
+                                        <a href="/" class="call-us" title="Call us Monday-Friday 6am-6pm PT">
+                                                Call us Monday-Friday 6am-6pm PT
+                                        </a>
+                                </li>
+                </ul>
+</div>
+                    </div>
+        </div>
+
+        <nav class="country-navigation">
+            <a href="/gb/en" class="country uk">Rocket Lawyer UK</a>
+            <a href="/es/es" class="country es">Rocket Lawyer ES</a>
+            <a href="/fr/fr" class="country fr">Rocket Lawyer FR</a>
+            <a href="/nl/nl" class="country nl">Rocket Lawyer NL</a>
+            <a href="/br/pt" class="country br">Rocket Lawyer BR</a>
+        </nav>
+
+        <div class="row copyright">
+            <p>
+<img src="/binaries/content/gallery/cicero/all-images/cicero-fpo-logo.svg" width="75" height="15" alt="cicero" loading="lazy" /><br>Copyright <span id="currentYear"></span> Rocket Lawyer Incorporated.<br><br>Rocket Lawyer is a legal tech company that has helped over 20 million businesses and individuals get online legal help at a price they can afford. Rocket Lawyer offers personalized legal documents, document review, e-signatures, legal advice, and help with business registration and filings.<br><br>Legal information and other services are delivered by or through Rocket Lawyer Incorporated (“Rocket Lawyer”) via RocketLawyer.com. Please note that Rocket Lawyer is not a "lawyer referral service," "accountant referral service," accounting firm, or law firm, does not provide legal or tax advice or representation (except in certain jurisdictions), and is not intended as a substitute for an attorney, accountant, accounting firm, or law firm.<br><br>The Arizona Supreme Court on 9/24/2024 authorized Rocket Legal Professional Services, Inc. (“RLPS”), a wholly-owned subsidiary of Rocket Lawyer Incorporated, to provide legal services, including the practice of law, as a nonlawyer-owned company; further information regarding this authorization can be found in our <a href="/general-terms-of-service?click=footer_disclaimer-terms-of-service">Terms of Service</a>.<br><br>Use of Rocket Lawyer is subject to our <a href="/general-terms-of-service?click=footer_disclaimer-terms-of-service">Terms of Service</a> and <a href="/privacy?click=footer_disclaimer-privacy-policy" class="nowrap">Privacy Policy</a>.<br><br>            </p>
+        </div>
+
+            <div class="row align-center footer-language">
+                <span id="siteseal" class="try-free-security-icon">
+                    <script async src="https://seal.godaddy.com/getSeal?sealID=2bwaxrVW6LZoFCPhMY3cMBV1jhUgnuGzC6vwHhsJg0XzcJaiV4lVkV12nyBL"></script>
+                </span>
+            </div>
+    </div>
+</footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        if (typeof jQuery == 'undefined')
+        {
+            document.write(unescape("%3Cscript src='/webfiles/1778799345876/js/jquery-3.5.1.min.js' %3E%3C/script%3E"));
+        }
+    </script>
+
+<script async="async" src="/webfiles/1778799345876/js/build/nibbler.min.js"></script>
+<script async="async" src="/webfiles/1778799345876/js/build/cookie.min.js"></script>
+<script async="async" src="/webfiles/1778799345876/js/build/regions.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+        if (window.location.hostname !== 'localhost') {
+            var script = document.createElement('script');
+            script.src = '/app/env-vars.js';
+            script.type = 'text/javascript';
+            document.head.appendChild(script);
+        } else {
+            console.log("Skipping env-vars.js load on localhost.");
+        }
+    
+//]]>
+</script>
+<script async="async" src="/webfiles/1778799345876/js/build/utility_env.min.js"></script>
+<script src="/webfiles/1778799345876/js/build/app.min.js"></script>
+<script async="async" src="/webfiles/1778799345876/js/build/utility_partnerID.min.js"></script>
+<script async="async" src="/webfiles/1778799345876/js/build/utility_couponID.min.js"></script>
+<script>
+//<![CDATA[
+
+      $(document).ready(function () {
+        initSearch("#loggedOutHeader .search-component", "https://api.rocketlawyer.com/search/v1", "query");
+      });
+    
+//]]>
+</script>
+<script src="/webfiles/1778799345876/js/build/search-box.min.js"></script>
+<script>
+//<![CDATA[
+
+                $(document).ready(function(){
+                    initSearchNew(".search-box", "https://api.rocketlawyer.com/search/v1", "query", "/search.rl", "query");
+                })
+            
+//]]>
+</script>
+    </body>
+</html>

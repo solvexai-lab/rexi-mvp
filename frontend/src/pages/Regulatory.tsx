@@ -93,19 +93,19 @@ export default function RegulatoryPage() {
             {dashboard && (
                 <div className="grid grid-cols-4 gap-6 mb-8">
                     <div className="bg-white rounded-xl border border-border p-5 text-center">
-                        <p className="text-sm text-primary-lighter">Total Alerts</p>
+                        <p className="text-sm text-gray-500">Total Alerts</p>
                         <p className="text-2xl font-bold">{dashboard.total_alerts}</p>
                     </div>
                     <div className="bg-white rounded-xl border border-border p-5 text-center">
-                        <p className="text-sm text-primary-lighter">Unread</p>
+                        <p className="text-sm text-gray-500">Unread</p>
                         <p className="text-2xl font-bold text-red-600">{dashboard.unread}</p>
                     </div>
                     <div className="bg-white rounded-xl border border-border p-5 text-center">
-                        <p className="text-sm text-primary-lighter">Updates</p>
+                        <p className="text-sm text-gray-500">Updates</p>
                         <p className="text-2xl font-bold">{updates.length}</p>
                     </div>
                     <div className="bg-white rounded-xl border border-border p-5 text-center">
-                        <p className="text-sm text-primary-lighter">Critical</p>
+                        <p className="text-sm text-gray-500">Critical</p>
                         <p className="text-2xl font-bold text-red-600">{dashboard.by_priority?.critical || 0}</p>
                     </div>
                 </div>
@@ -114,7 +114,7 @@ export default function RegulatoryPage() {
             <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
                 {['alerts', 'updates'].map(t => (
                     <button key={t} onClick={() => setTab(t)}
-                        className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-colors ${tab === t ? 'bg-white text-primary shadow-sm' : 'text-primary-lighter'}`}>
+                        className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-colors ${tab === t ? 'bg-white text-primary shadow-sm' : 'text-gray-500'}`}>
                         {t}
                     </button>
                 ))}
@@ -127,12 +127,12 @@ export default function RegulatoryPage() {
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Bell size={16} className={a.priority === 'critical' ? 'text-red-600' : 'text-primary-lighter'} />
+                                        <Bell size={16} className={a.priority === 'critical' ? 'text-red-600' : 'text-gray-500'} />
                                         <span className={`px-2 py-0.5 rounded text-xs font-medium uppercase ${priorityBadge(a.priority)}`}>{a.priority}</span>
                                         {a.status === 'unread' && <span className="w-2 h-2 bg-blue-600 rounded-full" />}
                                     </div>
                                     <h3 className="font-semibold mb-1">{a.title}</h3>
-                                    <p className="text-sm text-primary-lighter mb-3">{a.description}</p>
+                                    <p className="text-sm text-gray-500 mb-3">{a.description}</p>
                                     {a.suggested_actions?.length > 0 && (
                                         <div className="flex flex-wrap gap-2">
                                             {a.suggested_actions.map((action: string, i: number) => (
@@ -155,7 +155,7 @@ export default function RegulatoryPage() {
                     )) : (
                         <div className="bg-white rounded-xl border border-border p-12 text-center">
                             <Bell size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter">No regulatory alerts</p>
+                            <p className="text-gray-500">No regulatory alerts</p>
                         </div>
                     )}
                 </div>
@@ -166,9 +166,9 @@ export default function RegulatoryPage() {
                     {updates.length > 0 ? updates.map(u => (
                         <div key={u.id} className="bg-white rounded-xl border border-border p-5">
                             <h3 className="font-semibold mb-1">{u.title}</h3>
-                            <p className="text-sm text-primary-lighter mb-2">{u.summary}</p>
+                            <p className="text-sm text-gray-500 mb-2">{u.summary}</p>
                             <div className="flex items-center gap-3">
-                                {u.effective_date && <span className="text-xs text-primary-lighter">Effective: {u.effective_date}</span>}
+                                {u.effective_date && <span className="text-xs text-gray-500">Effective: {u.effective_date}</span>}
                                 {u.affected_clause_types?.length > 0 && (
                                     <div className="flex gap-1">
                                         {u.affected_clause_types.map((ct: string, i: number) => (
@@ -181,7 +181,7 @@ export default function RegulatoryPage() {
                     )) : (
                         <div className="bg-white rounded-xl border border-border p-12 text-center">
                             <FileText size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter">No regulatory updates</p>
+                            <p className="text-gray-500">No regulatory updates</p>
                         </div>
                     )}
                 </div>

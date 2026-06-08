@@ -49,7 +49,7 @@ class DoclingProcessor:
             self._converter = DocumentConverter()
             self._docling_available = True
             print("[Docling] DocumentConverter initialized")
-        except ImportError:
+        except Exception:
             print("[Docling] Not installed. Falling back to PyMuPDF + heuristic chunking.")
             self._docling_available = False
 

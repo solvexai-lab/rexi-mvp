@@ -14,7 +14,7 @@ Or manual tracing:
     lf = get_langfuse()
     if lf:
         trace = lf.trace(name="custom-trace")
-        generation = trace.generation(name="gemini-call", model="gemini-2.0-flash")
+        generation = trace.generation(name="gemini-call", model="gemini-2.5-flash")
         generation.end(output=response_text)
 """
 import os

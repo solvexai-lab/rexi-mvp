@@ -4,17 +4,17 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from pydantic import BaseModel
-import os, shutil, time
+import os, shutil, time, asyncio
 from app.core.database import get_session
-from app.models.tables import Contract, ContractClause, ContractVersion, RiskAssessment, RiskFinding, Obligation, AutomationLog, ContractTreeIndex, ContractEmbedding
+from app.models.tables import Contract, ContractClause, ContractVersion, Obligation, AutomationLog, ContractTreeIndex, ContractEmbedding, PlaybookRule
 from app.services.docling_processor import docling_processor
 from app.services.chunking_service import chunking_service
 from app.services.clause_extractor_v2 import chunked_clause_extractor
-from app.services.risk_engine import risk_engine
 from app.services.knowledge_graph_service import kg_service
 from app.services.storage import storage_service
 from app.services.pii_service import pii_analyzer
 from app.services.pageindex_service import pageindex_service
+from app.services.playbook_evaluator import evaluate_contract
 
 router = APIRouter(prefix="/api/v1/contracts", tags=["contracts"])
 
@@ -43,6 +43,13 @@ def _safe_filename(filename: str) -> str:
 @router.post("/upload")
 async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo-org")):
     start_time = time.time()
+
+    # Enforce max file size
+    content = await file.read()
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail=f"File too large. Max size is {MAX_FILE_SIZE / (1024*1024)} MB")
+    await file.seek(0)
+
     upload_dir = os.environ.get("UPLOAD_DIR", "./uploads")
     os.makedirs(upload_dir, exist_ok=True)
     safe_name = _safe_filename(file.filename or "upload")
@@ -88,16 +95,14 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
         # Mark as failed so user knows upload didn't work
         async with async_session_factory() as session:
             result = await session.execute(select(Contract).where(Contract.id == contract_id))
-            contract = result.scalar_one()
-            contract.status = "failed"
-            await session.commit()
+            contract = result.scalar_one_or_none()
+            if contract:
+                contract.status = "failed"
+                await session.commit()
         raise HTTPException(status_code=422, detail=f"Processing failed: {str(e)}")
 
     # === PHASE 3: Persist results — short DB transaction ===
     async with async_session_factory() as session:
-        # Risk Assessment FIRST (needed for contract.risk_score)
-        risk_result = await risk_engine.assess(contract_id, org_id, session)
-
         # Update contract
         result = await session.execute(select(Contract).where(Contract.id == contract_id))
         contract = result.scalar_one()
@@ -109,7 +114,6 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
         contract.auto_renewal = auto_renewal
         contract.start_date = start_date
         contract.end_date = end_date
-        contract.risk_score = risk_result["overall_score"]
 
         # Save clauses
         for c in clauses:
@@ -140,17 +144,23 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
             )
             session.add(obligation)
             await session.flush()
-            kg_service.create_obligation_node(obligation.id, obligation.description, obligation.obligation_type, obligation.due_date or "")
-            kg_service.link_contract_obligation(contract_id, obligation.id)
+            await asyncio.to_thread(
+                kg_service.create_obligation_node, obligation.id, obligation.description, obligation.obligation_type, obligation.due_date or ""
+            )
+            await asyncio.to_thread(kg_service.link_contract_obligation, contract_id, obligation.id)
 
         # KG links (legacy REXI schema)
-        kg_service.link_org_contract(org_id, contract_id)
-        kg_service.create_contract_node(contract_id, contract.title, contract.contract_type, contract.status, governing_law, value_inr)
+        await asyncio.to_thread(kg_service.link_org_contract, org_id, contract_id)
+        await asyncio.to_thread(
+            kg_service.create_contract_node, contract_id, contract.title, contract.contract_type, contract.status, governing_law, value_inr
+        )
         res = await session.execute(select(ContractClause).where(ContractClause.contract_id == contract_id))
         stored_clauses = res.scalars().all()
         for cl in stored_clauses:
-            kg_service.create_clause_node(cl.id, cl.clause_type, cl.clause_text, cl.page_number, cl.confidence_score)
-            kg_service.link_contract_clause(contract_id, cl.id)
+            await asyncio.to_thread(
+                kg_service.create_clause_node, cl.id, cl.clause_type, cl.clause_text, cl.page_number, cl.confidence_score
+            )
+            await asyncio.to_thread(kg_service.link_contract_clause, contract_id, cl.id)
 
         # GraphRAG schema (literal Cypher from graphrag-contract)
         graphrag_clauses = []
@@ -169,7 +179,8 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
                     }
                 ]
             })
-        kg_service.create_graphrag_contract(
+        await asyncio.to_thread(
+            kg_service.create_graphrag_contract,
             agreement_id=contract_id,
             agreement_name=contract.title,
             language="en",
@@ -187,24 +198,12 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
             clauses=graphrag_clauses,
         )
 
-        # Persist Risk Assessment
-        assessment = RiskAssessment(
-            contract_id=contract_id, org_id=org_id,
-            overall_score=risk_result["overall_score"], playbook_score=risk_result["playbook_score"],
-            law_score=risk_result["law_score"], regulatory_score=risk_result["regulatory_score"]
-        )
-        session.add(assessment)
-        await session.flush()
-        for f in risk_result["findings"]:
-            finding = RiskFinding(assessment_id=assessment.id, **f)
-            session.add(finding)
-
         # Audit Log
         duration_ms = int((time.time() - start_time) * 1000)
         log = AutomationLog(
             org_id=org_id, automation_type="contract_upload", status="completed",
             input_summary=file.filename,
-            output_summary=f"{len(clauses)} clauses, {len(tables)} tables, {page_count} pages, risk {risk_result['overall_score']}",
+            output_summary=f"{len(clauses)} clauses, {len(tables)} tables, {page_count} pages",
             duration_ms=duration_ms
         )
         session.add(log)
@@ -226,7 +225,6 @@ async def upload_contract(file: UploadFile = File(...), org_id: str = Form("demo
         "pages": page_count,
         "chunks": len(chunks),
         "cross_references": len(cross_refs),
-        "risk_score": risk_result["overall_score"],
         "obligations_found": len(obligations),
         "processing_time_ms": duration_ms,
         "extractor": process_result.get("extracted_by", "unknown"),
@@ -273,16 +271,6 @@ async def get_contract(contract_id: str, session: AsyncSession = Depends(get_ses
     res_clauses = await session.execute(select(ContractClause).where(ContractClause.contract_id == contract_id))
     clauses = res_clauses.scalars().all()
 
-    res_assessments = await session.execute(
-        select(RiskAssessment).where(RiskAssessment.contract_id == contract_id).order_by(RiskAssessment.created_at.desc())
-    )
-    latest_assessment = res_assessments.scalars().first()
-
-    findings = []
-    if latest_assessment:
-        res_findings = await session.execute(select(RiskFinding).where(RiskFinding.assessment_id == latest_assessment.id))
-        findings = res_findings.scalars().all()
-
     res_obligations = await session.execute(select(Obligation).where(Obligation.contract_id == contract_id))
     obligations = res_obligations.scalars().all()
 
@@ -298,13 +286,13 @@ async def get_contract(contract_id: str, session: AsyncSession = Depends(get_ses
     return {
         "contract": contract_data,
         "clauses": [cl.model_dump() for cl in clauses],
-        "assessment": latest_assessment.model_dump() if latest_assessment else None,
-        "findings": [f.model_dump() for f in findings],
+        "assessment": None,
+        "findings": [],
         "obligations": [o.model_dump() for o in obligations],
         "chunks": []
     }
 
-@router.get("/{contract_id}/pdf")
+@router.api_route("/{contract_id}/pdf", methods=["GET", "HEAD"])
 async def get_contract_pdf(contract_id: str, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Contract).where(Contract.id == contract_id))
     c = result.scalar_one_or_none()
@@ -324,26 +312,33 @@ async def get_contract_pdf(contract_id: str, session: AsyncSession = Depends(get
         return FileResponse(local_path, media_type="application/pdf", filename=c.title)
     raise HTTPException(status_code=404, detail="PDF not found")
 
-@router.post("/{contract_id}/assess")
-async def assess_contract(contract_id: str, org_id: str = "demo-org", session: AsyncSession = Depends(get_session)):
-    result = await risk_engine.assess(contract_id, org_id, session)
-    assessment = RiskAssessment(
-        contract_id=contract_id, org_id=org_id,
-        overall_score=result["overall_score"], playbook_score=result["playbook_score"],
-        law_score=result["law_score"], regulatory_score=result["regulatory_score"]
+
+@router.get("/{contract_id}/playbook-evaluation")
+async def evaluate_contract_playbook(
+    contract_id: str,
+    org_id: str = "demo-org",
+    session: AsyncSession = Depends(get_session)
+):
+    """Evaluate a contract against the organization's playbook rules."""
+    result = await session.execute(select(Contract).where(Contract.id == contract_id))
+    contract = result.scalar_one_or_none()
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    res_clauses = await session.execute(select(ContractClause).where(ContractClause.contract_id == contract_id))
+    clauses = [cl.model_dump() for cl in res_clauses.scalars().all()]
+
+    res_rules = await session.execute(
+        select(PlaybookRule).where(PlaybookRule.org_id == org_id, PlaybookRule.is_active == True)
     )
-    session.add(assessment)
-    await session.flush()
-    for f in result["findings"]:
-        finding = RiskFinding(assessment_id=assessment.id, **f)
-        session.add(finding)
-    # Update contract risk score
-    res = await session.execute(select(Contract).where(Contract.id == contract_id))
-    contract = res.scalar_one()
-    contract.risk_score = result["overall_score"]
-    await session.commit()
-    await session.refresh(assessment)
-    return {"assessment_id": assessment.id, **result}
+    rules = res_rules.scalars().all()
+
+    evaluation = evaluate_contract(
+        contract_type=contract.contract_type or "vendor",
+        clauses=clauses,
+        rules=rules,
+    )
+    return evaluation
 
 
 async def _run_enrichment_layers(contract_id: str, org_id: str, safe_name: str, process_result: dict, clauses: list) -> dict:
@@ -444,15 +439,12 @@ async def delete_contract(contract_id: str, session: AsyncSession = Depends(get_
         raise HTTPException(status_code=404, detail="Contract not found")
 
     # Delete related records
-    await session.execute(select(ContractClause).where(ContractClause.contract_id == contract_id))
     from sqlmodel import delete
     await session.execute(delete(ContractClause).where(ContractClause.contract_id == contract_id))
     await session.execute(delete(ContractVersion).where(ContractVersion.contract_id == contract_id))
     await session.execute(delete(Obligation).where(Obligation.contract_id == contract_id))
-    await session.execute(delete(RiskAssessment).where(RiskAssessment.contract_id == contract_id))
     await session.execute(delete(ContractTreeIndex).where(ContractTreeIndex.contract_id == contract_id))
     await session.execute(delete(ContractEmbedding).where(ContractEmbedding.contract_id == contract_id))
-    await session.execute(delete(AutomationLog).where(AutomationLog.contract_id == contract_id))
 
     # Delete PDF file
     if contract.pdf_path and os.path.exists(contract.pdf_path):

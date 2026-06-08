@@ -128,7 +128,7 @@ export default function TemplatesPage() {
                 <h1 className="text-2xl font-bold">Contract Templates</h1>
                 <div className="flex items-center gap-3">
                     <div className="relative w-64">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-lighter" />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
                         <input
                             type="text"
                             placeholder="Search templates..."
@@ -160,7 +160,7 @@ export default function TemplatesPage() {
                         <div className="flex items-start justify-between mb-4">
                             <div>
                                 <h3 className="font-semibold text-lg">{t.name}</h3>
-                                <span className="text-xs text-primary-lighter uppercase bg-gray-100 px-2 py-1 rounded-full mt-1 inline-block">{t.category}</span>
+                                <span className="text-xs text-gray-500 uppercase bg-gray-100 px-2 py-1 rounded-full mt-1 inline-block">{t.category}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
@@ -186,12 +186,12 @@ export default function TemplatesPage() {
                                 </button>
                             </div>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-4 font-mono text-xs text-primary-lighter whitespace-pre-wrap max-h-64 overflow-y-auto border border-border">
+                        <div className="bg-gray-50 rounded-lg p-4 font-mono text-xs text-gray-500 whitespace-pre-wrap max-h-64 overflow-y-auto border border-border">
                             {t.content}
                         </div>
                         {t.variables && Object.keys(t.variables).length > 0 && (
                             <div className="mt-4 flex flex-wrap gap-2">
-                                <span className="text-xs text-primary-lighter mr-1">Variables:</span>
+                                <span className="text-xs text-gray-500 mr-1">Variables:</span>
                                 {Object.keys(t.variables).map((v: string) => (
                                     <span key={v} className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium">{`{${v}}`}</span>
                                 ))}
@@ -201,7 +201,7 @@ export default function TemplatesPage() {
                 )) : (
                     <div className="bg-white rounded-xl border border-border p-12 text-center">
                         <FileText size={40} className="mx-auto mb-3 text-gray-300" />
-                        <p className="text-primary-lighter font-medium">
+                        <p className="text-gray-500 font-medium">
                             {search ? 'No templates match your search' : 'No templates available'}
                         </p>
                     </div>

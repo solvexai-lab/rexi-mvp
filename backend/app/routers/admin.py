@@ -18,11 +18,11 @@ async def run_seed(session: AsyncSession = Depends(get_session)):
 async def reset_demo(session: AsyncSession = Depends(get_session)):
     """Truncate user-uploaded data while keeping seeded config."""
     from sqlalchemy import text
-    from app.models.tables import Contract, ContractClause, RiskAssessment, RiskFinding, Obligation, ApprovalStage, ContractComment, Notification, AutomationLog, AuditTrailEntry
+    from app.models.tables import Contract, ContractClause, Obligation, ApprovalStage, ContractComment, Notification, AutomationLog, AuditTrailEntry
 
     tables = [
         AuditTrailEntry, AutomationLog, Notification, ContractComment,
-        ApprovalStage, Obligation, RiskFinding, RiskAssessment,
+        ApprovalStage, Obligation,
         ContractClause, Contract,
     ]
     for table in tables:

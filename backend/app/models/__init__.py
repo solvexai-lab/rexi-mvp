@@ -1,6 +1,6 @@
 from app.models.tables import (
     User, Organization, Contract, ContractClause, Obligation,
-    PlaybookRule, RiskAssessment, RiskFinding, EnforceabilityBenchmark,
+    PlaybookRule, EnforceabilityBenchmark,
     RegulatorySource, RegulatoryUpdate, RegulatoryAlert,
     ContractTemplate, ApprovalStage, ContractComment, Notification,
     AutomationLog, AuditTrailEntry,

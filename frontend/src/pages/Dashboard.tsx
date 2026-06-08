@@ -1,281 +1,166 @@
-import { motion } from 'framer-motion'
-import {
-    FileText, ShieldAlert, Bell, ClipboardList,
-    AlertTriangle, CheckCircle, Clock, Gavel,
-    DollarSign, TrendingUp, Timer, ShieldCheck
-} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useDashboardSummary, useOrganization } from '../hooks/useQueries'
 import {
-    PieChart, Pie, Cell, ResponsiveContainer, Tooltip,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid
+    FileText, AlertTriangle, Bell, CheckCircle, Clock,
+    ArrowRight, TrendingUp, Zap, Shield
+} from 'lucide-react'
+import { useDashboardSummary, useOrganization, usePlaybookSummary } from '../hooks/useQueries'
+import {
+    PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts'
 
-const COLORS: Record<string, string> = {
-    critical: '#EF4444',
-    high: '#F59E0B',
-    medium: '#3B82F6',
-    low: '#22C55E',
+const STATUS_COLORS: Record<string, string> = {
+    active: '#22C55E',
+    signed: '#8B5CF6',
+    approved: '#3B82F6',
+    analyzed: '#EC4899',
     draft: '#9CA3AF',
     in_review: '#F59E0B',
-    approved: '#3B82F6',
-    signed: '#8B5CF6',
-    active: '#22C55E',
     expired: '#6B7280',
     terminated: '#EF4444',
-    analyzed: '#EC4899',
-}
-
-function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
-    const [display, setDisplay] = useState(0)
-    useEffect(() => {
-        const step = value / 20
-        let current = 0
-        const timer = setInterval(() => {
-            current += step
-            if (current >= value) {
-                setDisplay(value)
-                clearInterval(timer)
-            } else {
-                setDisplay(Math.round(current * 10) / 10)
-            }
-        }, 30)
-        return () => clearInterval(timer)
-    }, [value])
-    return <span>{display}{suffix}</span>
-}
-
-import { useState, useEffect } from 'react'
-
-function KpiCard({ icon: Icon, label, value, color, suffix = '', subtext = '', index = 0, onClick }: any) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.08, duration: 0.4, ease: 'easeOut' }}
-            whileHover={{ y: -4, boxShadow: '0 12px 40px -12px rgba(0,0,0,0.12)' }}
-            onClick={onClick}
-            className={`bg-white rounded-xl border border-border p-6 ${onClick ? 'cursor-pointer hover:border-primary/30' : 'cursor-default'}`}
-        >
-            <div className="flex items-center justify-between mb-3">
-                <div className={`p-2 rounded-lg ${color.bg}`}>
-                    <Icon size={20} className={color.text} />
-                </div>
-                {subtext && <span className="text-xs text-primary-lighter">{subtext}</span>}
-            </div>
-            <p className="text-2xl font-bold mb-1">
-                {typeof value === 'number' ? <AnimatedNumber value={value} suffix={suffix} /> : value}
-            </p>
-            <p className="text-sm text-primary-lighter">{label}</p>
-        </motion.div>
-    )
-}
-
-function RiskGauge({ score }: { score: number }) {
-    const pct = Math.min(Math.max(score * 100, 0), 100)
-    const color = pct > 60 ? '#EF4444' : pct > 40 ? '#F59E0B' : '#22C55E'
-    const circumference = 2 * Math.PI * 45
-    const strokeDashoffset = circumference - (pct / 100) * circumference
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="bg-white rounded-xl border border-border p-6"
-        >
-            <h3 className="font-semibold mb-4">Average Risk Score</h3>
-            <div className="flex items-center justify-center">
-                <div className="relative w-40 h-40">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" stroke="#E5E5E5" strokeWidth="8" fill="none" />
-                        <circle cx="50" cy="50" r="45" stroke={color} strokeWidth="8" fill="none"
-                            strokeLinecap="round"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
-                            style={{ transition: 'stroke-dashoffset 1s ease-out' }}
-                        />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-3xl font-bold" style={{ color }}>{pct.toFixed(0)}</span>
-                        <span className="text-xs text-primary-lighter">/ 100</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex justify-center gap-4 mt-3 text-xs">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />Low</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-500" />Med</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />High</span>
-            </div>
-        </motion.div>
-    )
 }
 
 function SkeletonCard() {
-    return <div className="bg-white rounded-xl border border-border p-6 animate-pulse">
-        <div className="h-10 w-10 rounded-lg bg-gray-200 mb-3" />
+    return <div className="bg-white rounded-xl border border-gray-200 p-6 animate-pulse">
+        <div className="h-4 w-32 bg-gray-200 rounded mb-3" />
         <div className="h-8 w-20 bg-gray-200 rounded mb-2" />
-        <div className="h-4 w-32 bg-gray-200 rounded" />
+        <div className="h-4 w-48 bg-gray-200 rounded" />
     </div>
+}
+
+function ActionCard({ icon: Icon, title, subtitle, meta, color, onClick }: any) {
+    return (
+        <div
+            onClick={onClick}
+            className="bg-white rounded-xl border border-gray-200 p-5 cursor-pointer hover:border-gray-300 hover:shadow-sm transition-all group"
+        >
+            <div className="flex items-start justify-between mb-3">
+                <div className={`p-2 rounded-lg ${color.bg} ${color.text}`}>
+                    <Icon size={18} />
+                </div>
+                <ArrowRight size={16} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-sm mb-1">{title}</h3>
+            <p className="text-sm text-gray-500 mb-2">{subtitle}</p>
+            {meta && <p className="text-xs text-gray-400">{meta}</p>}
+        </div>
+    )
+}
+
+function StatPill({ label, value, color }: any) {
+    return (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50">
+            <span className={`w-2 h-2 rounded-full ${color}`} />
+            <span className="text-sm text-gray-600">{label}</span>
+            <span className="text-sm font-bold text-gray-900 ml-auto">{value}</span>
+        </div>
+    )
 }
 
 export default function DashboardPage() {
     const { data, isLoading } = useDashboardSummary()
+    const { data: playbookSummary } = usePlaybookSummary()
     const { data: orgData } = useOrganization()
     const navigate = useNavigate()
 
     if (isLoading || !data) {
         return (
-            <div className="p-8">
-                <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-                <div className="grid grid-cols-5 gap-6 mb-6">
-                    {[1, 2, 3, 4, 5].map(i => <SkeletonCard key={i} />)}
+            <div className="p-8 max-w-7xl mx-auto">
+                <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
+                <div className="grid grid-cols-4 gap-5 mb-6">
+                    {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
                 </div>
-                <div className="grid grid-cols-3 gap-6">
-                    <SkeletonCard /><SkeletonCard /><SkeletonCard />
+                <div className="grid grid-cols-2 gap-5">
+                    <SkeletonCard /><SkeletonCard />
                 </div>
             </div>
         )
     }
 
-    const risk = data.risk || {}
     const contracts = data.contracts || {}
     const obligations = data.obligations || {}
     const regulatory = data.regulatory || {}
+    const totalValue = data.platform_value?.total_value_inr || 0
 
-    const severityChart = [
-        { name: 'Critical', value: risk.by_severity?.critical || 0, color: COLORS.critical },
-        { name: 'High', value: risk.by_severity?.high || 0, color: COLORS.high },
-        { name: 'Medium', value: risk.by_severity?.medium || 0, color: COLORS.medium },
-        { name: 'Low', value: risk.by_severity?.low || 0, color: COLORS.low },
-    ].filter(d => d.value > 0)
+    const statusChart = Object.entries(contracts.by_status || {})
+        .map(([name, value]: [string, any]) => ({
+            name: name.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
+            value,
+            color: STATUS_COLORS[name] || '#3B82F6'
+        }))
+        .filter(d => d.value > 0)
 
-    const statusChart = Object.entries(contracts.by_status || {}).map(([name, value]: [string, any]) => ({
-        name: name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        value,
-        color: COLORS[name] || '#3B82F6'
-    })).filter(d => d.value > 0)
-
-    const obligationCards = [
-        { label: 'Pending', value: obligations.by_status?.pending || 0, color: 'text-orange-600 bg-orange-50' },
-        { label: 'Completed', value: obligations.by_status?.completed || 0, color: 'text-green-600 bg-green-50' },
-        { label: 'Overdue', value: obligations.by_status?.overdue || 0, color: 'text-red-600 bg-red-50' },
-    ]
-
-    const unreadTotal = Object.values(regulatory.unread_alerts || {}).reduce((a: any, b: any) => a + b, 0)
+    // Build action cards from real summary data
+    const pendingObligations = obligations.by_status?.pending || 0
+    const unreadAlerts = Object.values(regulatory.unread_alerts || {}).reduce((a: any, b: any) => a + b, 0)
+    const analyzedContracts = contracts.by_status?.analyzed || 0
+    const activeContracts = contracts.by_status?.active || 0
 
     return (
-        <div className="p-8">
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between mb-6"
-            >
-                <h1 className="text-2xl font-bold">Dashboard</h1>
-                <span className="text-sm text-primary-lighter">{orgData?.name || 'Your Organization'}</span>
-            </motion.div>
-
-            {/* KPI Row */}
-            <div className="grid grid-cols-5 gap-6 mb-6">
-                <KpiCard icon={FileText} label="Total Contracts" value={contracts.total}
-                    color={{ bg: 'bg-blue-50', text: 'text-blue-600' }} index={0}
-                    onClick={() => navigate('/contracts')} />
-                <KpiCard icon={ShieldAlert} label="Open Findings" value={risk.open_findings}
-                    color={{ bg: 'bg-red-50', text: 'text-red-600' }} index={1}
-                    onClick={() => navigate('/risk')} />
-                <KpiCard icon={ClipboardList} label="Pending Obligations" value={obligations.by_status?.pending || 0}
-                    color={{ bg: 'bg-orange-50', text: 'text-orange-600' }} index={2}
-                    onClick={() => navigate('/obligations?status=pending')} />
-                <KpiCard icon={Bell} label="Unread Alerts" value={unreadTotal}
-                    color={{ bg: 'bg-purple-50', text: 'text-purple-600' }} index={3}
-                    onClick={() => navigate('/regulatory')} />
-                <KpiCard icon={Gavel} label="Active Playbook Rules" value={data.active_playbook_rules || 0}
-                    color={{ bg: 'bg-indigo-50', text: 'text-indigo-600' }} index={4}
-                    onClick={() => navigate('/playbook')} />
+        <div className="p-8 max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h1 className="text-xl font-bold text-gray-900">Good morning, Counsel</h1>
+                    <p className="text-sm text-gray-500 mt-0.5">
+                        {orgData?.name || 'Your Organization'} · {contracts.total || 0} contracts · ₹{(totalValue / 1e7).toFixed(1)}Cr under management
+                    </p>
+                </div>
             </div>
 
-            {/* Platform Value Row — deterministic, no AI */}
-            {data.platform_value && (
-                <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 }}
-                    className="mb-6"
-                >
-                    <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp size={16} className="text-green-600" />
-                        <h2 className="text-sm font-semibold text-gray-700">Platform Value — Deterministic Metrics</h2>
-                    </div>
-                    <div className="grid grid-cols-4 gap-4">
-                        <KpiCard icon={DollarSign} label="Value Under Management"
-                            value={`₹${((data.platform_value.total_value_inr || 0) / 1e7).toFixed(1)}Cr`}
-                            color={{ bg: 'bg-green-50', text: 'text-green-600' }} index={0} />
-                        <KpiCard icon={TrendingUp} label="Automation Rate"
-                            value={`${data.platform_value.automation_rate || 0}%`}
-                            color={{ bg: 'bg-emerald-50', text: 'text-emerald-600' }} index={1}
-                            subtext="Contracts auto-processed" />
-                        <KpiCard icon={Timer} label="Time Saved"
-                            value={`${data.platform_value.time_saved_hours || 0}h`}
-                            color={{ bg: 'bg-teal-50', text: 'text-teal-600' }} index={2}
-                            subtext="Estimated vs manual review" />
-                        <KpiCard icon={ShieldCheck} label="Compliance Coverage"
-                            value={`${data.platform_value.compliance_coverage || 0}%`}
-                            color={{ bg: 'bg-cyan-50', text: 'text-cyan-600' }} index={3}
-                            subtext="Contracts with risk assessment" />
-                    </div>
-                </motion.div>
-            )}
+            {/* Action Cards — what needs attention */}
+            <div className="grid grid-cols-4 gap-5 mb-6">
+                <ActionCard
+                    icon={AlertTriangle}
+                    title={`${pendingObligations} obligation${pendingObligations !== 1 ? 's' : ''} pending`}
+                    subtitle="Require action or review"
+                    meta="Across active contracts"
+                    color={{ bg: 'bg-amber-50', text: 'text-amber-700' }}
+                    onClick={() => navigate('/obligations')}
+                />
+                <ActionCard
+                    icon={Shield}
+                    title={`${playbookSummary?.total_violations || 0} playbook violation${(playbookSummary?.total_violations || 0) !== 1 ? 's' : ''}`}
+                    subtitle="Deviations from standard terms"
+                    meta={`Across ${playbookSummary?.contracts_with_violations || 0} contracts · Avg score ${playbookSummary?.average_score ?? '—'}`}
+                    color={{ bg: 'bg-red-50', text: 'text-red-700' }}
+                    onClick={() => navigate('/contracts')}
+                />
+                <ActionCard
+                    icon={FileText}
+                    title={`${analyzedContracts} contract${analyzedContracts !== 1 ? 's' : ''} ready for review`}
+                    subtitle="AI analysis complete"
+                    meta="Awaiting legal sign-off"
+                    color={{ bg: 'bg-blue-50', text: 'text-blue-700' }}
+                    onClick={() => navigate('/contracts')}
+                />
+                <ActionCard
+                    icon={Bell}
+                    title={`${unreadAlerts} regulatory alert${unreadAlerts !== 1 ? 's' : ''}`}
+                    subtitle="May affect contract terms"
+                    meta="SEBI, RBI, MCA updates"
+                    color={{ bg: 'bg-purple-50', text: 'text-purple-700' }}
+                    onClick={() => navigate('/regulatory')}
+                />
+            </div>
 
             {/* Middle Row */}
-            <div className="grid grid-cols-3 gap-6 mb-6">
-                <div onClick={() => navigate('/risk')} className="cursor-pointer">
-                    <RiskGauge score={risk.avg_score || 0} />
-                </div>
-
-                {/* Findings by Severity */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5, duration: 0.5 }}
-                    onClick={() => navigate('/risk')}
-                    className="bg-white rounded-xl border border-border p-6 cursor-pointer hover:border-primary/30 transition-colors"
-                >
-                    <h3 className="font-semibold mb-4">Open Findings by Severity</h3>
-                    {severityChart.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={180}>
-                            <BarChart data={severityChart} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 12 }} />
-                                <Tooltip />
-                                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                    {severityChart.map((entry, i) => (
-                                        <Cell key={i} fill={entry.color} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div className="h-[180px] flex items-center justify-center text-sm text-primary-lighter">
-                            No open findings — great job!
-                        </div>
-                    )}
-                </motion.div>
-
-                {/* Contract Status Donut */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                    onClick={() => navigate('/contracts')}
-                    className="bg-white rounded-xl border border-border p-6 cursor-pointer hover:border-primary/30 transition-colors"
-                >
-                    <h3 className="font-semibold mb-4">Contract Status</h3>
+            <div className="grid grid-cols-3 gap-5 mb-6">
+                {/* Contract Status */}
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 className="font-semibold text-sm text-gray-900 mb-4">Contract Status</h3>
                     {statusChart.length > 0 ? (
                         <ResponsiveContainer width="100%" height={180}>
                             <PieChart>
-                                <Pie data={statusChart} dataKey="value" nameKey="name" cx="50%" cy="50%"
-                                    innerRadius={50} outerRadius={75} paddingAngle={3}>
+                                <Pie
+                                    data={statusChart}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={45}
+                                    outerRadius={75}
+                                    paddingAngle={3}
+                                >
                                     {statusChart.map((entry, i) => (
                                         <Cell key={i} fill={entry.color} />
                                     ))}
@@ -284,70 +169,99 @@ export default function DashboardPage() {
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="h-[180px] flex items-center justify-center text-sm text-primary-lighter">
+                        <div className="h-[180px] flex items-center justify-center text-sm text-gray-400">
                             No contracts yet
                         </div>
                     )}
-                </motion.div>
-            </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                        {statusChart.map(s => (
+                            <span key={s.name} className="text-[10px] flex items-center gap-1 text-gray-500">
+                                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
+                                {s.name} ({s.value})
+                            </span>
+                        ))}
+                    </div>
+                </div>
 
-            {/* Bottom Row */}
-            <div className="grid grid-cols-3 gap-6">
-                {/* Obligations */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7, duration: 0.5 }}
-                    className="bg-white rounded-xl border border-border p-6"
-                >
-                    <h3 className="font-semibold mb-4">Obligations</h3>
+                {/* Quick Stats */}
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 className="font-semibold text-sm text-gray-900 mb-4">Portfolio Snapshot</h3>
+                    <div className="space-y-2">
+                        <StatPill label="Active" value={activeContracts} color="bg-green-500" />
+                        <StatPill label="Analyzed" value={analyzedContracts} color="bg-pink-500" />
+                        <StatPill label="Approved" value={contracts.by_status?.approved || 0} color="bg-blue-500" />
+                        <StatPill label="Signed" value={contracts.by_status?.signed || 0} color="bg-purple-500" />
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Total Value</span>
+                            <span className="text-sm font-bold text-gray-900">₹{(totalValue / 1e7).toFixed(1)}Cr</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Obligations Breakdown */}
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 className="font-semibold text-sm text-gray-900 mb-4">Obligations</h3>
                     <div className="space-y-3">
-                        {obligationCards.map(c => (
+                        {[
+                            { label: 'Pending', value: obligations.by_status?.pending || 0, color: 'text-amber-700 bg-amber-50' },
+                            { label: 'Completed', value: obligations.by_status?.completed || 0, color: 'text-green-700 bg-green-50' },
+                            { label: 'Overdue', value: obligations.by_status?.overdue || 0, color: 'text-red-700 bg-red-50' },
+                        ].map(item => (
                             <div
-                                key={c.label}
-                                onClick={() => navigate(`/obligations?status=${c.label.toLowerCase()}`)}
+                                key={item.label}
+                                onClick={() => navigate(`/obligations?status=${item.label.toLowerCase()}`)}
                                 className="flex items-center justify-between p-3 rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
                             >
-                                <span className="text-sm font-medium">{c.label}</span>
-                                <span className={`px-3 py-1 rounded-full text-sm font-bold ${c.color}`}>{c.value}</span>
+                                <span className="text-sm font-medium text-gray-700">{item.label}</span>
+                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${item.color}`}>
+                                    {item.value}
+                                </span>
                             </div>
                         ))}
                     </div>
-                </motion.div>
+                    <button
+                        onClick={() => navigate('/obligations')}
+                        className="w-full mt-4 text-xs font-medium text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1 transition-colors"
+                    >
+                        View all obligations <ArrowRight size={12} />
+                    </button>
+                </div>
+            </div>
 
-                {/* Recent Activity */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.5 }}
-                    className="bg-white rounded-xl border border-border p-6 col-span-2"
-                >
-                    <h3 className="font-semibold mb-4">Recent Activity</h3>
-                    {data?.recent_logs?.length > 0 ? (
-                        <div className="space-y-3">
-                            {data.recent_logs.map((log: any, i: number) => (
-                                <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
-                                    <div className={`p-1.5 rounded-lg ${
-                                        log.status === 'completed' ? 'bg-green-100 text-green-600' :
-                                        log.status === 'failed' ? 'bg-red-100 text-red-600' :
-                                        'bg-yellow-100 text-yellow-600'
-                                    }`}>
-                                        {log.status === 'completed' ? <CheckCircle size={14} /> :
-                                         log.status === 'failed' ? <AlertTriangle size={14} /> :
-                                         <Clock size={14} />}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium capitalize">{log.automation_type.replace(/_/g, ' ')}</p>
-                                        <p className="text-xs text-primary-lighter truncate">{log.output_summary}</p>
-                                    </div>
-                                    <span className="text-xs text-primary-lighter whitespace-nowrap">{log.duration_ms}ms</span>
+            {/* Recent Activity */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-sm text-gray-900">Recent Activity</h3>
+                    <span className="text-xs text-gray-400">Last 24 hours</span>
+                </div>
+                {data?.recent_logs?.length > 0 ? (
+                    <div className="space-y-2">
+                        {data.recent_logs.slice(0, 5).map((log: any, i: number) => (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div className={`p-1.5 rounded-lg ${
+                                    log.status === 'completed' ? 'bg-green-100 text-green-600' :
+                                    log.status === 'failed' ? 'bg-red-100 text-red-600' :
+                                    'bg-amber-100 text-amber-600'
+                                }`}>
+                                    {log.status === 'completed' ? <CheckCircle size={14} /> :
+                                     log.status === 'failed' ? <AlertTriangle size={14} /> :
+                                     <Clock size={14} />}
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-sm text-primary-lighter py-8 text-center">No recent activity</div>
-                    )}
-                </motion.div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-800 capitalize">
+                                        {log.automation_type.replace(/_/g, ' ')}
+                                    </p>
+                                    <p className="text-xs text-gray-400 truncate">{log.output_summary}</p>
+                                </div>
+                                <span className="text-xs text-gray-400 tabular-nums">{log.duration_ms}ms</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-sm text-gray-400 py-8 text-center">No recent activity</div>
+                )}
             </div>
         </div>
     )

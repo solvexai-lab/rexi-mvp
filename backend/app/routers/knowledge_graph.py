@@ -16,7 +16,7 @@ from app.services.knowledge_graph_service import kg_service
 from app.models.tables import (
     Contract, ContractClause, PlaybookRule,
     RegulatoryUpdate, RegulatoryAlert,
-    EnforceabilityBenchmark, RiskFinding, RiskAssessment,
+    EnforceabilityBenchmark,
 )
 
 router = APIRouter(prefix="/api/v1/graph", tags=["knowledge-graph"])

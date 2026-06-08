@@ -113,7 +113,7 @@ async def ask_contract_stream(contract_id: str, data: dict, session: AsyncSessio
         generation = None
         if lf:
             trace = lf.trace(name="chat.ask_contract_stream", input={"question": question, "contract_id": contract_id})
-            generation = trace.generation(name="gemini-stream", model="gemini-2.0-flash", input=question)
+            generation = trace.generation(name="gemini-stream", model="gemini-2.5-flash", input=question)
 
         yield _sse("step", {"type": "analyzing", "title": "Analyzing question", "description": "Understanding your query..."})
         method_desc = {

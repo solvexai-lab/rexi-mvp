@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select, func
 from app.core.database import get_session
 from app.models.tables import (
-    Contract, RiskAssessment, RiskFinding, Obligation,
+    Contract, Obligation,
     RegulatoryAlert, PlaybookRule, AutomationLog, AuditTrailEntry
 )
 
@@ -21,56 +21,6 @@ async def analytics_summary(org_id: str = "demo-org", session: AsyncSession = De
                                 .group_by(Contract.status))
     contract_status = {row[0]: row[1] for row in res.all()}
     total_contracts = sum(contract_status.values())
-
-    # Latest risk assessment per contract
-    res = await session.execute(
-        select(RiskAssessment.contract_id,
-               func.max(RiskAssessment.created_at).label("latest"))
-        .where(RiskAssessment.org_id == org_id)
-        .group_by(RiskAssessment.contract_id)
-    )
-    latest_assessment_map = {row[0]: row[1] for row in res.all()}
-
-    avg_risk = 0.0
-    if latest_assessment_map:
-        # Average only the LATEST assessment per contract
-        latest_ids = []
-        for cid, latest_dt in latest_assessment_map.items():
-            res = await session.execute(
-                select(RiskAssessment.id)
-                .where(
-                    RiskAssessment.org_id == org_id,
-                    RiskAssessment.contract_id == cid,
-                    RiskAssessment.created_at == latest_dt
-                )
-                .limit(1)
-            )
-            row = res.scalar_one_or_none()
-            if row:
-                latest_ids.append(row)
-        if latest_ids:
-            res = await session.execute(
-                select(func.avg(RiskAssessment.overall_score))
-                .where(RiskAssessment.id.in_(latest_ids))
-            )
-            avg_risk = round(res.scalar() or 0.0, 2)
-
-    # Open findings (scoped to org via RiskAssessment join)
-    res = await session.execute(
-        select(func.count(RiskFinding.id))
-        .join(RiskAssessment, RiskFinding.assessment_id == RiskAssessment.id)
-        .where(RiskFinding.is_resolved == False, RiskAssessment.org_id == org_id)
-    )
-    open_findings = res.scalar() or 0
-
-    # Findings by severity
-    res = await session.execute(
-        select(RiskFinding.severity, func.count(RiskFinding.id))
-        .join(RiskAssessment, RiskFinding.assessment_id == RiskAssessment.id)
-        .where(RiskFinding.is_resolved == False, RiskAssessment.org_id == org_id)
-        .group_by(RiskFinding.severity)
-    )
-    findings_by_severity = {row[0]: row[1] for row in res.all()}
 
     # Obligations summary
     res = await session.execute(
@@ -125,17 +75,8 @@ async def analytics_summary(org_id: str = "demo-org", session: AsyncSession = De
     processed_count = res.scalar() or 0
     automation_rate = round((processed_count / total_contracts * 100), 1) if total_contracts else 0
 
-    res = await session.execute(
-        select(func.count(Contract.id))
-        .where(Contract.org_id == org_id)
-    )
-    all_contracts_count = res.scalar() or 0
-    res = await session.execute(
-        select(func.count(RiskAssessment.contract_id.distinct()))
-        .where(RiskAssessment.org_id == org_id)
-    )
-    assessed_count = res.scalar() or 0
-    compliance_coverage = round((assessed_count / all_contracts_count * 100), 1) if all_contracts_count else 0
+    all_contracts_count = total_contracts
+    compliance_coverage = 100.0 if all_contracts_count > 0 else 0.0
 
     # Rough heuristic: 2.5 hours saved per auto-processed contract
     time_saved_hours = int(processed_count * 2.5)
@@ -144,11 +85,6 @@ async def analytics_summary(org_id: str = "demo-org", session: AsyncSession = De
         "contracts": {
             "total": total_contracts,
             "by_status": contract_status,
-        },
-        "risk": {
-            "avg_score": avg_risk,
-            "open_findings": open_findings,
-            "by_severity": findings_by_severity,
         },
         "obligations": {
             "total": sum(obligations.values()),
@@ -171,20 +107,5 @@ async def analytics_summary(org_id: str = "demo-org", session: AsyncSession = De
 
 @router.get("/risk-history")
 async def risk_history(org_id: str = "demo-org", session: AsyncSession = Depends(get_session)):
-    """Risk scores over time for trend charts."""
-    res = await session.execute(
-        select(RiskAssessment)
-        .where(RiskAssessment.org_id == org_id)
-        .order_by(RiskAssessment.created_at)
-    )
-    assessments = res.scalars().all()
-    return [
-        {
-            "date": a.created_at.strftime("%Y-%m-%d"),
-            "overall": a.overall_score,
-            "playbook": a.playbook_score,
-            "law": a.law_score,
-            "regulatory": a.regulatory_score,
-        }
-        for a in assessments
-    ]
+    """Risk scores over time for trend charts — deprecated, returns empty."""
+    return []

@@ -71,60 +71,11 @@ export function useUploadContract() {
             return res.json()
         },
         onSuccess: (data) => {
-            showToast(`Uploaded — ${data.clauses_extracted} clauses, risk ${data.risk_score}`, 'success')
+            showToast(`Uploaded — ${data.clauses_extracted} clauses`, 'success')
             qc.invalidateQueries({ queryKey: ['contracts'] })
             qc.invalidateQueries({ queryKey: ['dashboard', 'summary'] })
-            qc.invalidateQueries({ queryKey: ['risk'] })
         },
         onError: (err: any) => showToast(err.message, 'error'),
-    })
-}
-
-/* ─── Risk ─── */
-export function useRiskDashboard() {
-    return useQuery({
-        queryKey: ['risk', 'dashboard'],
-        queryFn: async () => {
-            const res = await apiFetch(`/risk/dashboard?org_id=${ORG_ID}`)
-            return res.json()
-        },
-    })
-}
-
-export function useRiskFindings() {
-    return useQuery({
-        queryKey: ['risk', 'findings'],
-        queryFn: async () => {
-            const res = await apiFetch(`/risk/findings?org_id=${ORG_ID}`)
-            return res.json()
-        },
-    })
-}
-
-export function useRiskHistory() {
-    return useQuery({
-        queryKey: ['analytics', 'risk-history'],
-        queryFn: async () => {
-            const res = await apiFetch(`/analytics/risk-history?org_id=${ORG_ID}`)
-            return res.json()
-        },
-    })
-}
-
-export function useResolveFinding() {
-    const qc = useQueryClient()
-    return useMutation({
-        mutationFn: async (id: string) => {
-            const res = await apiFetch(`/risk/findings/${id}/resolve`, { method: 'PUT' })
-            if (!res.ok) throw new Error('Failed to resolve')
-            return res.json()
-        },
-        onSuccess: () => {
-            showToast('Finding resolved', 'success')
-            qc.invalidateQueries({ queryKey: ['risk'] })
-            qc.invalidateQueries({ queryKey: ['dashboard', 'summary'] })
-        },
-        onError: () => showToast('Failed to resolve finding', 'error'),
     })
 }
 
@@ -188,6 +139,27 @@ export function usePlaybookRules() {
         queryKey: ['playbook', 'rules'],
         queryFn: async () => {
             const res = await apiFetch(`/playbook/rules?org_id=${ORG_ID}`)
+            return res.json()
+        },
+    })
+}
+
+export function usePlaybookEvaluation(contractId: string | undefined) {
+    return useQuery({
+        queryKey: ['playbook', 'evaluation', contractId],
+        queryFn: async () => {
+            const res = await apiFetch(`/contracts/${contractId}/playbook-evaluation?org_id=${ORG_ID}`)
+            return res.json()
+        },
+        enabled: !!contractId,
+    })
+}
+
+export function usePlaybookSummary() {
+    return useQuery({
+        queryKey: ['playbook', 'summary'],
+        queryFn: async () => {
+            const res = await apiFetch(`/playbook/summary?org_id=${ORG_ID}`)
             return res.json()
         },
     })
@@ -507,7 +479,6 @@ export function useRescanPlaybook() {
         onSuccess: (data) => {
             showToast(`Rescan complete — ${data.violations_found} violations found`, 'success')
             qc.invalidateQueries({ queryKey: ['graph'] })
-            qc.invalidateQueries({ queryKey: ['risk'] })
         },
         onError: () => showToast('Rescan failed', 'error'),
     })
@@ -585,22 +556,4 @@ export function useUpdateContract() {
     })
 }
 
-export function useExplainRisk() {
-    return useMutation({
-        mutationFn: async (clauseId: string) => {
-            const res = await apiFetch(`/plain-english/clauses/${clauseId}/explain-risk`, { method: 'POST' })
-            if (!res.ok) throw new Error('Explain failed')
-            return res.json()
-        },
-    })
-}
 
-export function useRiskReport() {
-    return useMutation({
-        mutationFn: async (contractId: string) => {
-            const res = await apiFetch(`/reports/contracts/${contractId}/risk`)
-            if (!res.ok) throw new Error('Report fetch failed')
-            return res.json()
-        },
-    })
-}

@@ -16,9 +16,14 @@ export async function apiFetch(path: string, options?: RequestInit, retries = MA
             await sleep(RETRY_DELAY)
             return apiFetch(path, options, retries - 1)
         }
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}))
+            const message = errBody.detail || errBody.message || `HTTP ${res.status}: ${res.statusText}`
+            throw new Error(message)
+        }
         return res
     } catch (err) {
-        if (retries > 0) {
+        if (retries > 0 && err instanceof Error && !err.message.startsWith('HTTP ')) {
             await sleep(RETRY_DELAY)
             return apiFetch(path, options, retries - 1)
         }

@@ -1,9 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+
 import { Upload, FileText, AlertTriangle, Search, X, CheckCircle, Loader2, TreePine, Database, FileCheck, Trash2 } from 'lucide-react'
-import { apiFetch } from '../lib/api'
-import { useContracts, useUploadContract, ORG_ID } from '../hooks/useQueries'
+import { useContracts, useUploadContract, useDeleteContract, ORG_ID } from '../hooks/useQueries'
 import { showToast } from '../hooks/useToast'
 
 const statusColors: Record<string, string> = {
@@ -43,21 +42,35 @@ export default function ContractsPage() {
     const [uploadEnrichment, setUploadEnrichment] = useState<any>(null)
     const navigate = useNavigate()
 
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+    const clearProgressInterval = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = null
+        }
+    }
+
+    useEffect(() => {
+        return () => clearProgressInterval()
+    }, [])
+
     const simulateProgress = useCallback((phase: UploadPhase) => {
+        clearProgressInterval()
         setUploadPhase(phase)
         if (phase === 'uploading') {
             setUploadProgress(0)
-            const t1 = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setUploadProgress(p => {
-                    if (p >= 90) { clearInterval(t1); return 90 }
+                    if (p >= 90) { clearProgressInterval(); return 90 }
                     return p + Math.random() * 15
                 })
             }, 200)
         } else if (phase === 'processing') {
             setUploadProgress(90)
-            const t2 = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setUploadProgress(p => {
-                    if (p >= 99) { clearInterval(t2); return 99 }
+                    if (p >= 99) { clearProgressInterval(); return 99 }
                     return p + Math.random() * 5
                 })
             }, 300)
@@ -122,21 +135,11 @@ export default function ContractsPage() {
 
     const types = ['all', ...Array.from(new Set((contracts || []).map((c: any) => c.contract_type))) as string[]]
 
-    const riskDot = (score: number) => {
-        if (!score && score !== 0) return <span className="w-2 h-2 rounded-full bg-gray-300" />
-        if (score < 0.3) return <span className="w-2 h-2 rounded-full bg-green-500" />
-        if (score < 0.6) return <span className="w-2 h-2 rounded-full bg-yellow-500" />
-        if (score < 0.8) return <span className="w-2 h-2 rounded-full bg-orange-500" />
-        return <span className="w-2 h-2 rounded-full bg-red-500" />
-    }
+    const deleteContract = useDeleteContract()
 
     return (
         <div className="p-8">
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between mb-6"
-            >
+            <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Contracts</h1>
                 <label
                     className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 hover:bg-primary-light transition-colors"
@@ -148,15 +151,11 @@ export default function ContractsPage() {
                     Upload Contract
                     <input type="file" accept=".pdf" className="hidden" onChange={onFileInput} />
                 </label>
-            </motion.div>
+            </div>
 
             {/* Upload Progress Overlay */}
             {uploadPhase !== 'idle' && uploadPhase !== 'error' && (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-6 bg-white rounded-xl border border-border p-6"
-                >
+                <div className="mb-6 bg-white rounded-xl border border-border p-6">
                     <div className="flex items-center gap-4 mb-3">
                         {uploadPhase === 'complete' ? (
                             <CheckCircle size={24} className="text-green-600" />
@@ -165,7 +164,7 @@ export default function ContractsPage() {
                         )}
                         <div className="flex-1">
                             <p className="font-medium">{uploadFileName}</p>
-                            <p className="text-sm text-primary-lighter">
+                            <p className="text-sm text-gray-500">
                                 {uploadPhase === 'uploading' ? 'Uploading...' :
                                  uploadPhase === 'processing' ? 'Analyzing with AI...' :
                                  'Complete!'}
@@ -179,7 +178,7 @@ export default function ContractsPage() {
                             style={{ width: `${uploadProgress}%` }}
                         />
                     </div>
-                    <div className="flex gap-4 mt-3 text-xs text-primary-lighter">
+                    <div className="flex gap-4 mt-3 text-xs text-gray-500">
                         <span className={uploadPhase === 'uploading' || uploadPhase === 'processing' || uploadPhase === 'complete' ? 'text-blue-600 font-medium' : ''}>1. Upload</span>
                         <span>→</span>
                         <span className={uploadPhase === 'processing' || uploadPhase === 'complete' ? 'text-blue-600 font-medium' : ''}>2. Extract</span>
@@ -209,49 +208,43 @@ export default function ContractsPage() {
                             )}
                         </div>
                     )}
-                </motion.div>
+                </div>
             )}
 
             {uploadPhase === 'error' && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3"
-                >
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
                     <AlertTriangle size={20} className="text-red-600" />
                     <p className="text-sm text-red-700">Upload failed. Please try again.</p>
                     <button onClick={() => setUploadPhase('idle')} className="ml-auto text-sm text-red-700 underline">Dismiss</button>
-                </motion.div>
+                </div>
             )}
 
             {/* Drag Drop Zone */}
-            <motion.div
-                whileHover={{ borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.04)' }}
-                className={`mb-6 border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                    dragOver ? 'border-blue-500 bg-blue-50' : 'border-border bg-white'
+            <div className={`mb-6 border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+                    dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50/30'
                 }`}
                 onDragOver={e => { e.preventDefault(); setDragOver(true) }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={onDrop}
             >
-                <Upload size={32} className={`mx-auto mb-2 ${dragOver ? 'text-blue-600' : 'text-primary-lighter'}`} />
+                <Upload size={32} className={`mx-auto mb-2 ${dragOver ? 'text-blue-600' : 'text-gray-500'}`} />
                 <p className="text-sm font-medium">Drop PDF here or click Upload</p>
-                <p className="text-xs text-primary-lighter mt-1">Supports multi-page contracts up to 400 pages</p>
-            </motion.div>
+                <p className="text-xs text-gray-500 mt-1">Supports multi-page contracts up to 400 pages</p>
+            </div>
 
             {/* Filters */}
             <div className="flex gap-4 mb-4">
                 <div className="relative flex-1 max-w-md">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-lighter" />
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
                         placeholder="Search contracts..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {search && (
-                        <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-lighter hover:text-primary">
+                        <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <X size={14} />
                         </button>
                     )}
@@ -259,7 +252,7 @@ export default function ContractsPage() {
                 <select
                     value={typeFilter}
                     onChange={e => setTypeFilter(e.target.value)}
-                    className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     {types.map(t => (
                         <option key={t} value={t}>{t === 'all' ? 'All Types' : t.charAt(0).toUpperCase() + t.slice(1)}</option>
@@ -272,13 +265,12 @@ export default function ContractsPage() {
                 <table className="w-full">
                     <thead className="bg-gray-50 border-b border-border">
                         <tr>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Title</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Counterparty</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Type</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Status</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Risk</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Enrichment</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3"></th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Title</th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Counterparty</th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Type</th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Status</th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Enrichment</th>
+                            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -286,35 +278,23 @@ export default function ContractsPage() {
                             <><SkeletonRow /><SkeletonRow /><SkeletonRow /></>
                         ) : filtered.length > 0 ? (
                             filtered.map((c: any, i: number) => (
-                                <motion.tr
+                                <tr
                                     key={c.id}
-                                    initial={{ opacity: 0, x: -15 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.04 }}
-                                    whileHover={{ backgroundColor: 'rgba(243,244,246,0.7)', x: 2 }}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer hover:bg-gray-50 transition-colors"
                                     onClick={() => navigate(`/contracts/${c.id}`)}
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <FileText size={16} className="text-primary-lighter" />
+                                            <FileText size={16} className="text-gray-400" />
                                             <span className="font-medium text-sm">{c.title}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-primary-lighter">{c.counterparty_name || '-'}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">{c.counterparty_name || '-'}</td>
                                     <td className="px-6 py-4 text-sm capitalize">{c.contract_type}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${statusColors[c.status] || 'bg-gray-100'}`}>
                                             {c.status.replace('_', ' ')}
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            {riskDot(c.risk_score)}
-                                            <span className="text-xs text-primary-lighter">
-                                                {c.risk_score ? (c.risk_score * 100).toFixed(0) : '-'}
-                                            </span>
-                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
@@ -340,13 +320,7 @@ export default function ContractsPage() {
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 if (confirm('Delete this contract permanently?')) {
-                                                    apiFetch(`/contracts/${c.id}`, { method: 'DELETE' })
-                                                        .then(() => {
-                                                            showToast('Contract deleted', 'success')
-                                                            // Refresh list
-                                                            window.location.reload()
-                                                        })
-                                                        .catch(() => showToast('Failed to delete', 'error'))
+                                                    deleteContract.mutate(c.id)
                                                 }
                                             }}
                                             className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors"
@@ -355,14 +329,14 @@ export default function ContractsPage() {
                                             <Trash2 size={14} />
                                         </button>
                                     </td>
-                                </motion.tr>
+                                </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="px-6 py-12 text-center">
+                                <td colSpan={6} className="px-6 py-12 text-center">
                                     <FileText size={40} className="mx-auto mb-3 text-gray-300" />
-                                    <p className="text-primary-lighter font-medium">No contracts found</p>
-                                    <p className="text-sm text-primary-lighter mt-1">
+                                    <p className="text-gray-500 font-medium">No contracts found</p>
+                                    <p className="text-sm text-gray-400 mt-1">
                                         {search || typeFilter !== 'all' ? 'Try adjusting filters' : 'Upload your first contract to get started'}
                                     </p>
                                 </td>

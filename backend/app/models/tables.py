@@ -147,31 +147,6 @@ class PlaybookRule(SQLModel, table=True):
     contract_type: str = Field(default="", sa_column=Column(String))
     # If empty, applies to all contract types. Otherwise only to matching type.
 
-class RiskAssessment(SQLModel, table=True):
-    __tablename__ = "risk_assessments"
-    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
-    contract_id: str = Field(sa_column=Column(String, index=True, nullable=False))
-    org_id: str = Field(sa_column=Column(String, index=True, nullable=False))
-    overall_score: float = Field(default=0.0, sa_column=Column(Float))
-    playbook_score: float = Field(default=0.0, sa_column=Column(Float))
-    law_score: float = Field(default=0.0, sa_column=Column(Float))
-    regulatory_score: float = Field(default=0.0, sa_column=Column(Float))
-    created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column(DateTime, nullable=False))
-
-class RiskFinding(SQLModel, table=True):
-    __tablename__ = "risk_findings"
-    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
-    assessment_id: str = Field(sa_column=Column(String, index=True, nullable=False))
-    clause_id: Optional[str] = Field(default=None, sa_column=Column(String))
-    finding_type: str = Field(sa_column=Column(String, nullable=False))
-    severity: str = Field(sa_column=Column(String, nullable=False))
-    title: str = Field(sa_column=Column(String, nullable=False))
-    description: str = Field(sa_column=Column(Text, nullable=False))
-    suggested_amendment: str = Field(default="", sa_column=Column(Text))
-    statute_reference: str = Field(default="", sa_column=Column(String))
-    is_resolved: bool = Field(default=False, sa_column=Column(Boolean))
-    created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column(DateTime, nullable=False))
-
 class EnforceabilityBenchmark(SQLModel, table=True):
     __tablename__ = "enforceability_benchmarks"
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)

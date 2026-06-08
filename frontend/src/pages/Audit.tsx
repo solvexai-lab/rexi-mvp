@@ -74,7 +74,7 @@ export default function AuditPage() {
             <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
                 {['logs', 'trail'].map(t => (
                     <button key={t} onClick={() => setTab(t as any)}
-                        className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-colors ${tab === t ? 'bg-white text-primary shadow-sm' : 'text-primary-lighter'}`}>
+                        className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-colors ${tab === t ? 'bg-white text-primary shadow-sm' : 'text-gray-500'}`}>
                         {t === 'logs' ? 'Automation Logs' : 'Tamper-Proof Trail'}
                     </button>
                 ))}
@@ -85,11 +85,11 @@ export default function AuditPage() {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-border">
                             <tr>
-                                <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Automation</th>
-                                <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Status</th>
-                                <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Input</th>
-                                <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Output</th>
-                                <th className="text-right text-xs font-medium text-primary-lighter uppercase px-6 py-3">Duration</th>
+                                <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Automation</th>
+                                <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Status</th>
+                                <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Input</th>
+                                <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Output</th>
+                                <th className="text-right text-xs font-medium text-gray-500 uppercase px-6 py-3">Duration</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -101,15 +101,15 @@ export default function AuditPage() {
                                             {statusIcon(log.status)} <span className="capitalize">{log.status}</span>
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-primary-lighter max-w-xs truncate">{log.input_summary}</td>
-                                    <td className="px-6 py-4 text-sm text-primary-lighter max-w-xs truncate">{log.output_summary}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{log.input_summary}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{log.output_summary}</td>
                                     <td className="px-6 py-4 text-sm text-right font-medium">{log.duration_ms}ms</td>
                                 </tr>
                             )) : (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center">
                                         <Activity size={40} className="mx-auto mb-3 text-gray-300" />
-                                        <p className="text-primary-lighter font-medium">No audit logs yet</p>
+                                        <p className="text-gray-500 font-medium">No audit logs yet</p>
                                     </td>
                                 </tr>
                             )}
@@ -129,11 +129,11 @@ export default function AuditPage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="text-sm font-medium capitalize">{entry.action}</span>
-                                        <span className="text-xs text-primary-lighter">{entry.resource_type} · {entry.resource_id?.slice(0, 8)}</span>
+                                        <span className="text-xs text-gray-500">{entry.resource_type} · {entry.resource_id?.slice(0, 8)}</span>
                                     </div>
-                                    <p className="text-xs text-primary-lighter">Actor: {entry.actor_email} · {new Date(entry.created_at).toLocaleString()}</p>
+                                    <p className="text-xs text-gray-500">Actor: {entry.actor_email} · {new Date(entry.created_at).toLocaleString()}</p>
                                     {entry.entry_hash && (
-                                        <p className="text-xs text-primary-lighter mt-1 font-mono">Hash: {entry.entry_hash.slice(0, 24)}...</p>
+                                        <p className="text-xs text-gray-500 mt-1 font-mono">Hash: {entry.entry_hash.slice(0, 24)}...</p>
                                     )}
                                 </div>
                             </div>
@@ -141,8 +141,8 @@ export default function AuditPage() {
                     )) : (
                         <div className="bg-white rounded-xl border border-border p-12 text-center">
                             <Shield size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter font-medium">No audit trail entries yet</p>
-                            <p className="text-sm text-primary-lighter mt-1">Every action is cryptographically hashed for tamper-proof compliance</p>
+                            <p className="text-gray-500 font-medium">No audit trail entries yet</p>
+                            <p className="text-sm text-gray-500 mt-1">Every action is cryptographically hashed for tamper-proof compliance</p>
                         </div>
                     )}
                 </div>

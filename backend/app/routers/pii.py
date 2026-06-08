@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 from app.core.database import get_session
 from app.services.pii_service import pii_analyzer
 

@@ -1,14 +1,17 @@
 """Regulatory RSS scraper for 20+ Indian government sources.
 Runs as background task or on-demand."""
 import os
+import logging
 import httpx
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import List, Dict
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from app.models.tables import RegulatoryUpdate, RegulatoryAlert, Contract, ContractClause, Organization
 from app.services.knowledge_graph_service import kg_service
+
+logger = logging.getLogger(__name__)
 
 class RegulatoryScraper:
     SOURCES = {
@@ -45,6 +48,29 @@ class RegulatoryScraper:
     async def scrape_all(self, session: AsyncSession) -> Dict:
         """Scrape all regulatory sources. Returns summary."""
         results = {"updates_found": 0, "alerts_generated": 0, "errors": []}
+
+        # Batch fetch all orgs and contracts once
+        res_orgs = await session.execute(select(Organization))
+        all_orgs = res_orgs.scalars().all()
+
+        org_contract_map = {}
+        org_clause_map = {}
+        for org in all_orgs:
+            res_contracts = await session.execute(
+                select(Contract).where(Contract.org_id == org.id)
+            )
+            contracts = res_contracts.scalars().all()
+            org_contract_map[org.id] = contracts
+            contract_ids = [c.id for c in contracts]
+            if contract_ids:
+                res_clauses = await session.execute(
+                    select(ContractClause).where(ContractClause.contract_id.in_(contract_ids))
+                )
+                clauses = res_clauses.scalars().all()
+                org_clause_map[org.id] = clauses
+            else:
+                org_clause_map[org.id] = []
+
         for source_id, source in self.SOURCES.items():
             try:
                 updates = await self._scrape_source(source_id, source)
@@ -52,20 +78,24 @@ class RegulatoryScraper:
                     session.add(update)
                     await session.flush()
                     results["updates_found"] += 1
-                    # Generate alerts for all orgs
-                    res_orgs = await session.execute(select(Organization))
-                    orgs = res_orgs.scalars().all()
-                    for org in orgs:
-                        alert = await self._create_alert(org.id, update, session)
+                    # Generate alerts for all orgs using pre-fetched data
+                    for org in all_orgs:
+                        alert = self._create_alert_from_maps(
+                            org.id, update, org_contract_map.get(org.id, []), org_clause_map.get(org.id, [])
+                        )
                         if alert:
                             session.add(alert)
-                            await session.flush()
                             results["alerts_generated"] += 1
                     # Link to knowledge graph
                     for ct in update.affected_clause_types:
-                        kg_service.link_regulation_clause_type(update.id, ct)
+                        try:
+                            kg_service.link_regulation_clause_type(update.id, ct)
+                        except Exception:
+                            pass
             except Exception as e:
+                logger.warning(f"Regulatory scraper failed for {source_id}: {e}")
                 results["errors"].append(f"{source_id}: {str(e)}")
+
         await session.commit()
         return results
 
@@ -82,12 +112,14 @@ class RegulatoryScraper:
             async with httpx.AsyncClient(timeout=30) as client:
                 r = await client.get(source["rss"], headers={"User-Agent": "REXI-Bot/1.0"})
                 r.raise_for_status()
-        except Exception:
+        except Exception as e:
+            logger.warning(f"RSS fetch failed for {source_id}: {e}")
             return []
         try:
             root = ET.fromstring(r.text)
             items = root.findall(".//item")
-        except Exception:
+        except Exception as e:
+            logger.warning(f"RSS parse failed for {source_id}: {e}")
             return []
         updates = []
         for item in items[:5]:  # Limit to 5 most recent
@@ -128,20 +160,25 @@ class RegulatoryScraper:
             dt = parsedate_to_datetime(date_str)
             return dt.strftime("%Y-%m-%d")
         except Exception:
-            return datetime.now().strftime("%Y-%m-%d")
+            return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    async def _create_alert(self, org_id: str, update: RegulatoryUpdate, session: AsyncSession) -> RegulatoryAlert:
-        """Create a regulatory alert for an organization."""
-        res_contracts = await session.execute(select(Contract).where(Contract.org_id == org_id))
-        org_contracts = res_contracts.scalars().all()
+    def _create_alert_from_maps(
+        self, org_id: str, update: RegulatoryUpdate,
+        org_contracts: List[Contract], org_clauses: List[ContractClause]
+    ) -> RegulatoryAlert:
+        """Create a regulatory alert using pre-fetched contract/clause maps."""
         affected_contracts = []
+        contract_clauses = {c.id: [] for c in org_contracts}
+        for cl in org_clauses:
+            if cl.contract_id in contract_clauses:
+                contract_clauses[cl.contract_id].append(cl)
+
         for contract in org_contracts:
-            res_clauses = await session.execute(select(ContractClause).where(ContractClause.contract_id == contract.id))
-            clauses = res_clauses.scalars().all()
-            for cl in clauses:
+            for cl in contract_clauses.get(contract.id, []):
                 if cl.clause_type in update.affected_clause_types:
                     affected_contracts.append(contract.id)
                     break
+
         priority = "medium"
         if "data_processing" in update.affected_clause_types or "confidentiality" in update.affected_clause_types:
             priority = "high"

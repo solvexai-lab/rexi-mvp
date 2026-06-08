@@ -96,8 +96,8 @@ Return JSON array only."""
         for p in paragraphs:
             p_lower = p.lower()
             for clause_type in self.CLAUSE_TYPES:
-                keywords = clause_type.replace("_", " ").split()
-                if any(kw in p_lower for kw in keywords):
+                keyword_phrase = clause_type.replace("_", " ")
+                if keyword_phrase in p_lower or clause_type.replace("_", "") in p_lower.replace(" ", ""):
                     clauses.append({
                         "clause_type": clause_type,
                         "clause_text": p[:1500],

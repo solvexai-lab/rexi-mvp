@@ -6,9 +6,9 @@ from app.services.knowledge_graph_service import kg_service
 from app.models.tables import (
     Organization, PlaybookRule, EnforceabilityBenchmark,
     RegulatoryUpdate, RegulatoryAlert, ContractTemplate,
-    Obligation, AutomationLog,
+    Obligation, AutomationLog, AuditTrailEntry,
     Contract, ContractClause, ContractVersion,
-    RiskAssessment, RiskFinding, ApprovalStage, ContractComment,
+    ApprovalStage, ContractComment,
     ContractTreeIndex, ContractEmbedding,
     ClauseHighlight, PlainEnglishSummary,
 )
@@ -557,72 +557,62 @@ async def seed_database():
             session.add(org)
 
         # ── Playbook Rules (real company standards) ──
-        result = await session.execute(select(PlaybookRule).where(PlaybookRule.org_id == "demo-org"))
-        if not result.scalars().all():
-            rules = [
-                PlaybookRule(org_id="demo-org", rule_name="Max Liability Cap — 2x Annual Value", rule_type="liability",
-                             condition="max_value", threshold_value="2000000", severity="high"),
-                PlaybookRule(org_id="demo-org", rule_name="Min Termination Notice — 30 Days", rule_type="termination",
-                             condition="min_value", threshold_value="30", severity="critical"),
-                PlaybookRule(org_id="demo-org", rule_name="Payment Terms — Net 30 Max", rule_type="payment",
-                             condition="max_value", threshold_value="30", severity="medium"),
-                PlaybookRule(org_id="demo-org", rule_name="Auto-Renewal Clause Required", rule_type="termination",
-                             condition="must_have", threshold_value="explicit_clause", severity="high"),
-                PlaybookRule(org_id="demo-org", rule_name="Indian Governing Law Mandatory", rule_type="governing_law",
-                             condition="must_have", threshold_value="yes", severity="critical"),
-                PlaybookRule(org_id="demo-org", rule_name="DPDP Consent Language Required", rule_type="data_processing",
-                             condition="must_have", threshold_value="yes", severity="high"),
-                PlaybookRule(org_id="demo-org", rule_name="Indemnity Cap — 1x Annual Fees", rule_type="indemnity",
-                             condition="max_value", threshold_value="1000000", severity="high"),
-                PlaybookRule(org_id="demo-org", rule_name="IP Assignment — Explicit Clause", rule_type="intellectual_property",
-                             condition="must_have", threshold_value="yes", severity="critical"),
-                PlaybookRule(org_id="demo-org", rule_name="Arbitration Seat — India Preferred", rule_type="dispute_resolution",
-                             condition="must_have", threshold_value="india", severity="medium"),
-                PlaybookRule(org_id="demo-org", rule_name="Non-Compete — Max 12 Months", rule_type="non_compete",
-                             condition="max_value", threshold_value="12", severity="high"),
-                PlaybookRule(org_id="demo-org", rule_name="Force Majeure — Specific Events List", rule_type="force_majeure",
-                             condition="must_have", threshold_value="explicit_list", severity="medium"),
-                PlaybookRule(org_id="demo-org", rule_name="Data Localisation — India Storage", rule_type="data_processing",
-                             condition="must_have", threshold_value="india", severity="high"),
-                # ── NDA-specific ──
-                PlaybookRule(org_id="demo-org", rule_name="NDA: Mutual NDA Clause Required", rule_type="confidentiality",
-                             condition="must_have", threshold_value="mutual", severity="critical", contract_type="nda"),
-                PlaybookRule(org_id="demo-org", rule_name="NDA: Return Period ≤ 15 Days", rule_type="termination",
-                             condition="max_value", threshold_value="15", severity="high", contract_type="nda"),
-                PlaybookRule(org_id="demo-org", rule_name="NDA: Survival Period ≥ 2 Years", rule_type="confidentiality",
-                             condition="min_value", threshold_value="24", severity="high", contract_type="nda"),
-                # ── Employment-specific ──
-                PlaybookRule(org_id="demo-org", rule_name="Employment: Probation Period ≤ 6 Months", rule_type="termination",
-                             condition="max_value", threshold_value="180", severity="medium", contract_type="employment"),
-                PlaybookRule(org_id="demo-org", rule_name="Employment: IP Assignment Clause Required", rule_type="intellectual_property",
-                             condition="must_have", threshold_value="explicit", severity="critical", contract_type="employment"),
-                PlaybookRule(org_id="demo-org", rule_name="Employment: Gratuity Reference Required", rule_type="payment",
-                             condition="must_have", threshold_value="gratuity", severity="high", contract_type="employment"),
-                PlaybookRule(org_id="demo-org", rule_name="Employment: Non-Compete ≤ 12 Months", rule_type="non_compete",
-                             condition="max_value", threshold_value="12", severity="high", contract_type="employment"),
-                PlaybookRule(org_id="demo-org", rule_name="Employment: Background Check Required", rule_type="confidentiality",
-                             condition="must_have", threshold_value="background_check", severity="medium", contract_type="employment"),
-                # ── Vendor-specific ──
-                PlaybookRule(org_id="demo-org", rule_name="Vendor: Liability Cap ≤ 2x Annual Value", rule_type="liability",
-                             condition="max_value", threshold_value="10000000", severity="high", contract_type="vendor"),
-                PlaybookRule(org_id="demo-org", rule_name="Vendor: Payment Terms ≤ 30 Days", rule_type="payment",
-                             condition="max_value", threshold_value="30", severity="medium", contract_type="vendor"),
-                PlaybookRule(org_id="demo-org", rule_name="Vendor: Insurance Certificate Required", rule_type="indemnity",
-                             condition="must_have", threshold_value="insurance", severity="high", contract_type="vendor"),
-                PlaybookRule(org_id="demo-org", rule_name="Vendor: SLA Clause Required", rule_type="warranty",
-                             condition="must_have", threshold_value="sla", severity="medium", contract_type="vendor"),
-                # ── License-specific ──
-                PlaybookRule(org_id="demo-org", rule_name="License: Data Localisation Clause Required", rule_type="data_processing",
-                             condition="must_have", threshold_value="india_storage", severity="critical", contract_type="license"),
-                PlaybookRule(org_id="demo-org", rule_name="License: Warranty Period ≥ 90 Days", rule_type="warranty",
-                             condition="min_value", threshold_value="90", severity="high", contract_type="license"),
-                PlaybookRule(org_id="demo-org", rule_name="License: UAT Milestone Required", rule_type="termination",
-                             condition="must_have", threshold_value="uat", severity="medium", contract_type="license"),
-                PlaybookRule(org_id="demo-org", rule_name="License: Exit Clause (Data Export) Required", rule_type="data_processing",
-                             condition="must_have", threshold_value="exit_clause", severity="high", contract_type="license"),
-            ]
-            for r in rules:
-                session.add(r)
+        # Always clear and re-seed to ensure latest rule scopes are active
+        from sqlalchemy import delete
+        await session.execute(delete(PlaybookRule).where(PlaybookRule.org_id == "demo-org"))
+        rules = [
+            # ── Universal rules ──
+            PlaybookRule(org_id="demo-org", rule_name="Min Termination Notice — 30 Days", rule_type="termination",
+                         condition="min_value", threshold_value="30", severity="critical"),
+            PlaybookRule(org_id="demo-org", rule_name="Indian Governing Law Mandatory", rule_type="governing_law",
+                         condition="must_have", threshold_value="yes", severity="critical"),
+            PlaybookRule(org_id="demo-org", rule_name="DPDP Consent Language Required", rule_type="data_processing",
+                         condition="must_have", threshold_value="yes", severity="high"),
+            PlaybookRule(org_id="demo-org", rule_name="Arbitration Seat — India Preferred", rule_type="dispute_resolution",
+                         condition="must_have", threshold_value="india", severity="medium"),
+            # ── NDA-specific ──
+            PlaybookRule(org_id="demo-org", rule_name="NDA: Mutual NDA Clause Required", rule_type="confidentiality",
+                         condition="must_have", threshold_value="mutual", severity="critical", contract_type="nda"),
+            PlaybookRule(org_id="demo-org", rule_name="NDA: Return Period ≤ 15 Days", rule_type="termination",
+                         condition="max_value", threshold_value="15", severity="high", contract_type="nda"),
+            PlaybookRule(org_id="demo-org", rule_name="NDA: Survival Period ≥ 2 Years", rule_type="confidentiality",
+                         condition="min_value", threshold_value="24", severity="high", contract_type="nda"),
+            # ── Employment-specific ──
+            PlaybookRule(org_id="demo-org", rule_name="Employment: IP Assignment Clause Required", rule_type="intellectual_property",
+                         condition="must_have", threshold_value="explicit", severity="critical", contract_type="employment"),
+            PlaybookRule(org_id="demo-org", rule_name="Employment: Non-Compete ≤ 12 Months", rule_type="non_compete",
+                         condition="max_value", threshold_value="12", severity="high", contract_type="employment"),
+            PlaybookRule(org_id="demo-org", rule_name="Employment: Probation Period ≤ 6 Months", rule_type="termination",
+                         condition="max_value", threshold_value="180", severity="medium", contract_type="employment"),
+            PlaybookRule(org_id="demo-org", rule_name="Employment: Gratuity Reference Required", rule_type="payment",
+                         condition="must_have", threshold_value="gratuity", severity="high", contract_type="employment"),
+            PlaybookRule(org_id="demo-org", rule_name="Employment: Background Check Required", rule_type="confidentiality",
+                         condition="must_have", threshold_value="background_check", severity="medium", contract_type="employment"),
+            # ── Vendor-specific ──
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: Liability Cap ≤ 2x Annual Value", rule_type="liability",
+                         condition="max_value", threshold_value="10000000", severity="high", contract_type="vendor"),
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: Payment Terms ≤ 30 Days", rule_type="payment",
+                         condition="max_value", threshold_value="30", severity="medium", contract_type="vendor"),
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: Insurance Certificate Required", rule_type="indemnity",
+                         condition="must_have", threshold_value="insurance", severity="high", contract_type="vendor"),
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: SLA Clause Required", rule_type="warranty",
+                         condition="must_have", threshold_value="sla", severity="medium", contract_type="vendor"),
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: Auto-Renewal Clause Required", rule_type="termination",
+                         condition="must_have", threshold_value="explicit_clause", severity="high", contract_type="vendor"),
+            PlaybookRule(org_id="demo-org", rule_name="Vendor: Force Majeure — Specific Events List", rule_type="force_majeure",
+                         condition="must_have", threshold_value="explicit_list", severity="medium", contract_type="vendor"),
+            # ── License-specific ──
+            PlaybookRule(org_id="demo-org", rule_name="License: Data Localisation Clause Required", rule_type="data_processing",
+                         condition="must_have", threshold_value="india_storage", severity="critical", contract_type="license"),
+            PlaybookRule(org_id="demo-org", rule_name="License: Warranty Period ≥ 90 Days", rule_type="warranty",
+                         condition="min_value", threshold_value="90", severity="high", contract_type="license"),
+            PlaybookRule(org_id="demo-org", rule_name="License: UAT Milestone Required", rule_type="termination",
+                         condition="must_have", threshold_value="uat", severity="medium", contract_type="license"),
+            PlaybookRule(org_id="demo-org", rule_name="License: Exit Clause (Data Export) Required", rule_type="data_processing",
+                         condition="must_have", threshold_value="exit_clause", severity="high", contract_type="license"),
+        ]
+        for r in rules:
+            session.add(r)
 
         # ── Enforceability Benchmarks (real Indian law) ──
         result = await session.execute(select(EnforceabilityBenchmark))
@@ -834,6 +824,49 @@ async def seed_database():
             for log in logs:
                 session.add(log)
 
+        # ── Audit Trail Entries ──
+        result = await session.execute(select(AuditTrailEntry).where(AuditTrailEntry.org_id == "demo-org"))
+        if not result.scalars().all():
+            from app.services.audit_service import audit_service
+            # Seed realistic audit entries for demo contracts
+            audit_entries = [
+                ("demo-c1", "CONTRACT_CREATED", "contract", "demo-c1",
+                 {"title": "Mutual NDA — InnoTech Solutions Pvt Ltd", "contract_type": "nda", "source": "seed"}),
+                ("demo-c1", "CLAUSES_EXTRACTED", "contract", "demo-c1",
+                 {"clause_count": 5, "extracted_by": "seed", "types": ["confidentiality", "termination", "data_processing", "governing_law", "liability"]}),
+                ("demo-c1", "PLAYBOOK_EVALUATED", "contract", "demo-c1",
+                 {"score": 85, "violations": 1, "severity": "medium"}),
+                ("demo-c2", "CONTRACT_CREATED", "contract", "demo-c2",
+                 {"title": "Vendor Supply Agreement — TechSupply Solutions Pvt Ltd", "contract_type": "vendor", "source": "seed"}),
+                ("demo-c2", "CLAUSES_EXTRACTED", "contract", "demo-c2",
+                 {"clause_count": 8, "extracted_by": "seed", "types": ["termination", "liability", "payment", "data_processing", "confidentiality", "governing_law", "indemnity", "force_majeure"]}),
+                ("demo-c2", "PLAYBOOK_EVALUATED", "contract", "demo-c2",
+                 {"score": 70, "violations": 3, "severity": "high"}),
+                ("demo-c3", "CONTRACT_CREATED", "contract", "demo-c3",
+                 {"title": "Employment Agreement — Rahul Verma", "contract_type": "employment", "source": "seed"}),
+                ("demo-c3", "CLAUSES_EXTRACTED", "contract", "demo-c3",
+                 {"clause_count": 6, "extracted_by": "seed", "types": ["termination", "confidentiality", "payment", "governing_law", "intellectual_property", "non_compete"]}),
+                ("demo-c3", "PLAYBOOK_EVALUATED", "contract", "demo-c3",
+                 {"score": 75, "violations": 2, "severity": "medium"}),
+                ("demo-c4", "CONTRACT_CREATED", "contract", "demo-c4",
+                 {"title": "Software License Agreement — CloudStack Technologies Pvt Ltd", "contract_type": "license", "source": "seed"}),
+                ("demo-c4", "CLAUSES_EXTRACTED", "contract", "demo-c4",
+                 {"clause_count": 8, "extracted_by": "seed", "types": ["termination", "liability", "payment", "data_processing", "confidentiality", "governing_law", "intellectual_property", "force_majeure"]}),
+                ("demo-c4", "PLAYBOOK_EVALUATED", "contract", "demo-c4",
+                 {"score": 65, "violations": 4, "severity": "critical"}),
+            ]
+            for resource_id, action, resource_type, contract_id, details in audit_entries:
+                await audit_service.log_action(
+                    session=session,
+                    org_id="demo-org",
+                    actor_id="system",
+                    actor_email="system@rexi.local",
+                    action=action,
+                    resource_type=resource_type,
+                    resource_id=resource_id,
+                    details=details,
+                )
+
         await session.commit()
 
     # ── Neo4j (fire and forget) ──
@@ -1017,7 +1050,7 @@ async def _seed_demo_contracts(session):
             counterparty_name=cd["counterparty_name"],
             counterparty_email=cd.get("counterparty_email", ""),
             value_inr=cd["value_inr"],
-            risk_score=cd["risk_score"],
+            risk_score=0.0,
             start_date=cd["start_date"],
             end_date=cd["end_date"],
             auto_renewal=cd["auto_renewal"],
@@ -1034,26 +1067,6 @@ async def _seed_demo_contracts(session):
                 page_number=1, confidence_score=conf, extracted_by="seed"
             )
             session.add(cl)
-
-        # Risk Assessment
-        assessment = RiskAssessment(
-            contract_id=cd["id"], org_id="demo-org",
-            overall_score=cd["risk_score"],
-            playbook_score=round(cd["risk_score"] * 0.9, 2),
-            law_score=round(cd["risk_score"] * 0.85, 2),
-            regulatory_score=round(cd["risk_score"] * 0.75, 2),
-        )
-        session.add(assessment)
-        await session.flush()
-
-        # Findings
-        for sev, ftype, desc, suggestion in cd["findings"]:
-            f = RiskFinding(
-                assessment_id=assessment.id, severity=sev, finding_type=ftype,
-                title=desc[:80], description=desc,
-                suggested_amendment=suggestion, is_resolved=False,
-            )
-            session.add(f)
 
         # Version
         version = ContractVersion(

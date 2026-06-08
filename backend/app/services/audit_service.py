@@ -3,11 +3,16 @@ Each entry includes a SHA-256 hash of its content + the previous entry's hash,
 creating a blockchain-like chain of custody."""
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from app.models.tables import AuditTrailEntry
+
+def _utc_now() -> datetime:
+    """Return naive UTC datetime (matches tables.py default_factory)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
 
 class AuditService:
     """Append-only audit log with Merkle-style chaining."""
@@ -22,7 +27,7 @@ class AuditService:
             "resource_id": entry_data.get("resource_id", ""),
             "details": entry_data.get("details", {}),
             "previous_hash": previous_hash,
-            "timestamp": entry_data.get("created_at", datetime.utcnow().isoformat()),
+            "timestamp": entry_data.get("created_at", _utc_now().isoformat()),
         }
         serialized = json.dumps(data, sort_keys=True, default=str)
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
@@ -44,12 +49,13 @@ class AuditService:
             select(AuditTrailEntry)
             .where(AuditTrailEntry.org_id == org_id)
             .order_by(AuditTrailEntry.created_at.desc())
+            .with_for_update()
         )
         previous = result.scalars().first()
         previous_hash = previous.entry_hash if previous else "0" * 64
 
         # Use single timestamp for both hash and DB
-        now = datetime.utcnow()
+        now = _utc_now()
         entry_data = {
             "org_id": org_id,
             "actor_id": actor_id,

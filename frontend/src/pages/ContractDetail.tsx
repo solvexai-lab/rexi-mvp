@@ -1,36 +1,27 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
+
 import {
     ArrowLeft, AlertTriangle, Shield, BookOpen, FileText, CheckCircle, Clock,
-    Eye, Send, Download, MessageSquare, ThumbsUp, ThumbsDown, User, Loader2,
-    Zap, Layers, Gavel, Bell, Sparkles, Scale, ChevronRight, Highlighter,
-    TreePine, Lock, ShieldAlert, Edit3, X, Save
+    Eye, Send, MessageSquare, ThumbsUp, ThumbsDown, User, Loader2,
+    Zap, Layers, Gavel, Bell, Sparkles, Scale, ChevronLeft, ChevronRight,
+    Lock, Edit3, X, Save
 } from 'lucide-react'
 import {
     useContract, useContractStages, useContractComments,
     usePlainEnglish, useGeneratePlainEnglish, useAskContract,
-    useContractVersions, useHighlights, useGenerateHighlights,
+    useContractVersions,
     useContractTree, useContractPII, useAnonymizeText,
     useApproveStage, useRejectStage, useSubmitForApproval,
     useTransitionContract, usePostComment, useRedlineCompare,
-    useUpdateContract, useExplainRisk, useRiskReport,
+    useUpdateContract, usePlaybookEvaluation,
 } from '../hooks/useQueries'
-import {
-    PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar,
-    XAxis, YAxis, CartesianGrid
-} from 'recharts'
 import { apiFetch } from '../lib/api'
 import { showToast } from '../hooks/useToast'
 import PDFViewer from '../components/PDFViewer'
 import ContractStructure from '../components/ContractStructure'
 import ContractPII from '../components/ContractPII'
 import DocxDiffPanel from '../components/DocxDiffPanel'
-
-const SEVERITY_COLORS: Record<string, string> = {
-    critical: '#EF4444', high: '#F59E0B', medium: '#3B82F6', low: '#22C55E'
-}
 
 function SkeletonBlock({ className = '' }: { className?: string }) {
     return <div className={`bg-gray-200 rounded animate-pulse ${className}`} />
@@ -47,6 +38,198 @@ function SkeletonDetail() {
                 <SkeletonBlock className="h-24" />
             </div>
             <SkeletonBlock className="h-64" />
+        </div>
+    )
+}
+
+/* ─── Clause assessment badge ─── */
+function ClauseBadge({ type }: { type: string }) {
+    const map: Record<string, { label: string; bg: string; text: string; border: string }> = {
+        termination: { label: 'Attention', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+        liability: { label: 'Review', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
+        indemnity: { label: 'Review', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
+        confidentiality: { label: 'Critical', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+        non_compete: { label: 'Critical', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+        payment: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+        governing_law: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+        force_majeure: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+        intellectual_property: { label: 'Attention', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+        data_processing: { label: 'Critical', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+        dispute_resolution: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+        warranty: { label: 'Review', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
+        assignment: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+        amendment: { label: 'Standard', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+    }
+    const cfg = map[type] || { label: 'Review', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' }
+    return (
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${cfg.text.replace('text-', 'bg-')}`} />
+            {cfg.label}
+        </span>
+    )
+}
+
+/* ─── Suggested fix template ─── */
+function SuggestedFix({ clauseType }: { clauseType: string }) {
+    const fixes: Record<string, string> = {
+        termination: 'Ensure notice period is reciprocal. Specify consequences of termination (return of materials, data deletion).',
+        liability: 'Cap liability at a reasonable multiple of contract value. Exclude indirect/consequential damages.',
+        indemnity: 'Limit indemnity to direct losses caused by the indemnifying party. Add a monetary cap.',
+        confidentiality: 'Define what constitutes Confidential Information explicitly. Add a return/destruction clause post-termination.',
+        non_compete: 'Limit scope to reasonable geography and duration. Ensure enforceability under local employment law.',
+        payment: 'Specify currency, payment method, late interest rate, and invoicing schedule clearly.',
+        governing_law: 'Choose a jurisdiction familiar to both parties. Consider arbitration for cross-border contracts.',
+        force_majeure: 'Define specific force majeure events. Add notice and mitigation obligations.',
+        intellectual_property: 'Clarify ownership of pre-existing vs. newly created IP. Specify license scope and duration.',
+        data_processing: 'Ensure GDPR/compliance clauses. Define data retention and deletion obligations.',
+        dispute_resolution: 'Specify arbitration venue and rules. Consider tiered resolution (negotiation → mediation → arbitration).',
+        warranty: 'Limit warranty period. Exclude implied warranties where permissible. Define remedy (repair/replace/refund).',
+    }
+    return <p className="text-sm text-gray-600 leading-relaxed">{fixes[clauseType] || 'Review this clause with legal counsel to ensure it aligns with your organization\'s risk appetite and standard playbook.'}</p>
+}
+
+/* ─── Legal Review side panel ─── */
+function LegalReviewPanel({ contract, clauses, plainEnglishData, evaluation }: any) {
+    const [activeIdx, setActiveIdx] = useState(0)
+    const summaries = plainEnglishData?.summaries || []
+
+    // Merge clauses with plain-english summaries
+    const enriched = clauses.map((cl: any) => {
+        const pe = summaries.find((s: any) => s.clause_type === cl.clause_type)
+        return { ...cl, plain_english: pe?.plain_english || '' }
+    })
+
+    const active = enriched[activeIdx] || enriched[0]
+
+    if (!contract.pdf_url && !contract.pdf_path) {
+        return (
+            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                <FileText size={48} className="mx-auto mb-3 text-gray-300" />
+                <p className="text-gray-500 font-medium">PDF preview not available</p>
+                <p className="text-sm text-gray-400 mt-1">The contract was uploaded without a PDF file</p>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex gap-5" style={{ height: 760 }}>
+            {/* Left — PDF */}
+            <div className="flex-[3] bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                <PDFViewer url={contract.pdf_url || `/contracts/${contract.id}/pdf`} />
+            </div>
+
+            {/* Right — Legal Review */}
+            <div className="flex-[2] bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                {/* Header */}
+                <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div>
+                        <h3 className="font-semibold text-gray-900 text-sm">Legal Review</h3>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            {enriched.length > 0 ? `${activeIdx + 1} of ${enriched.length}` : 'No clauses extracted'}
+                            {enriched.length > 0 && ' • Prioritized by Risk'}
+                        </p>
+                    </div>
+                    {enriched.length > 1 && (
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setActiveIdx(i => Math.max(0, i - 1))}
+                                disabled={activeIdx === 0}
+                                className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 transition"
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+                            <button
+                                onClick={() => setActiveIdx(i => Math.min(enriched.length - 1, i + 1))}
+                                disabled={activeIdx === enriched.length - 1}
+                                className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 transition"
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Clause cards */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                    {enriched.length === 0 ? (
+                        <div className="text-center py-10">
+                            <BookOpen size={32} className="mx-auto text-gray-300 mb-2" />
+                            <p className="text-sm text-gray-500">No clauses extracted</p>
+                            <p className="text-xs text-gray-400 mt-1">Upload a richer document or install Docling for full extraction.</p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Active clause — big card */}
+                            <div className="border border-gray-100 rounded-xl p-5 bg-gray-50/50">
+                                <div className="flex items-start justify-between gap-3 mb-3">
+                                    <h4 className="font-semibold text-gray-900 text-sm capitalize leading-tight">
+                                        {active.clause_type.replace(/_/g, ' ')}
+                                    </h4>
+                                    <ClauseBadge type={active.clause_type} />
+                                </div>
+
+                                {/* Quote */}
+                                <div className="bg-white rounded-lg border border-gray-100 p-3.5 mb-4">
+                                    <p className="text-sm text-gray-600 leading-relaxed italic">
+                                        “{active.clause_text.slice(0, 400)}{active.clause_text.length > 400 ? '…' : ''}”
+                                    </p>
+                                </div>
+
+                                {/* In Simple Words */}
+                                <div className="mb-4">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">In Simple Words</p>
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                        {active.plain_english || 'This clause defines the rights and responsibilities of the parties. Review with legal counsel to ensure alignment with your playbook.'}
+                                    </p>
+                                </div>
+
+                                {/* Suggested Fix — uses real Gemini-generated suggestions */}
+                                <div className="bg-indigo-50/60 rounded-lg border border-indigo-100 p-3.5">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-1.5 flex items-center gap-1.5">
+                                        <Sparkles size={10} /> Suggested Fix
+                                    </p>
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                        {active.suggestions || active.plain_english || 'Review this clause with legal counsel to ensure alignment with your organization\'s playbook.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Mini clause list */}
+                            {enriched.length > 1 && (
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">All Clauses</p>
+                                    {enriched.map((cl: any, i: number) => (
+                                        <button
+                                            key={cl.id || i}
+                                            onClick={() => setActiveIdx(i)}
+                                            className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm transition ${
+                                                i === activeIdx
+                                                    ? 'border-gray-300 bg-gray-50 shadow-sm'
+                                                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="font-medium text-gray-800 capitalize truncate">
+                                                    {cl.clause_type.replace(/_/g, ' ')}
+                                                </span>
+                                                <ClauseBadge type={cl.clause_type} />
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {/* Score footer */}
+                <div className="px-5 py-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                    <span className="text-xs text-gray-500">Playbook Score</span>
+                    <span className={`text-sm font-bold ${evaluation?.score >= 80 ? 'text-green-700' : evaluation?.score >= 60 ? 'text-amber-700' : 'text-red-700'}`}>
+                        {evaluation?.score ?? '—'}/100
+                    </span>
+                </div>
+            </div>
         </div>
     )
 }
@@ -70,16 +253,19 @@ export default function ContractDetailPage() {
     // Sync tab with URL
     useEffect(() => {
         if (tab !== urlTab) {
-            setSearchParams({ tab })
+            setSearchParams(prev => {
+                prev.set('tab', tab)
+                return prev
+            })
         }
-    }, [tab])
+    }, [tab, urlTab, setSearchParams])
 
     useEffect(() => {
         if (urlTab && urlTab !== tab) {
             setTab(urlTab)
         }
     }, [urlTab])
-    const [reportLoading, setReportLoading] = useState(false)
+
     const [actionLoading, setActionLoading] = useState<string | null>(null)
 
     // Mutation hooks
@@ -106,35 +292,20 @@ export default function ContractDetailPage() {
     const [redlineMode, setRedlineMode] = useState<'version' | 'contract' | 'docx'>('version')
     const [selectedVersionId, setSelectedVersionId] = useState('')
     const { data: versionsData } = useContractVersions(id)
-    const [explainClauseId, setExplainClauseId] = useState<string | null>(null)
-    const [explainResult, setExplainResult] = useState<any>(null)
-    const [explainLoading, setExplainLoading] = useState(false)
-    const { data: highlightsData } = useHighlights(id)
-    const generateHighlights = useGenerateHighlights()
+    // Note: highlights are shown via LegalReviewPanel in Document tab
 
     // Enrichment layer hooks
     const { data: treeData, isLoading: treeLoading, error: treeError } = useContractTree(id)
     const { data: piiData, isLoading: piiLoading, error: piiError } = useContractPII(id)
     const anonymizeMutation = useAnonymizeText()
     const [anonymizeResult, setAnonymizeResult] = useState<any>(null)
-    const [chatMethod, setChatMethod] = useState<string>('')
 
     const tabs = [
-        { key: 'overview', label: 'Overview', icon: FileText },
-        { key: 'clauses', label: 'Clauses', icon: BookOpen },
-        { key: 'structure', label: 'Structure', icon: TreePine },
-        { key: 'pii', label: 'PII', icon: Lock },
-        { key: 'plain-english', label: 'Plain English', icon: Eye },
-        { key: 'explain', label: 'Explain AI', icon: Zap },
-        { key: 'redline', label: 'Redline', icon: Gavel },
+        { key: 'document', label: 'Document', icon: FileText },
+        { key: 'analysis', label: 'Analysis', icon: Eye },
+        { key: 'workflow', label: 'Workflow', icon: CheckCircle },
         { key: 'chat', label: 'Chat', icon: MessageSquare },
-        { key: 'highlights', label: 'Highlights', icon: Highlighter },
         { key: 'processing', label: 'Processing', icon: Layers },
-        { key: 'risk', label: 'Risk', icon: Shield },
-        { key: 'obligations', label: 'Obligations', icon: CheckCircle },
-        { key: 'approvals', label: 'Approvals', icon: ThumbsUp },
-        { key: 'comments', label: 'Comments', icon: Bell },
-        { key: 'pdf', label: 'PDF', icon: Download },
     ]
 
     // --- Actions (using mutations) ---
@@ -185,28 +356,9 @@ export default function ContractDetailPage() {
         setActionLoading(null)
     }
 
-    const riskReportMut = useRiskReport()
-    const exportReport = async () => {
-        if (!id) return
-        setReportLoading(true)
-        try {
-            const d = await riskReportMut.mutateAsync(id)
-            const blob = new Blob([d.report_html], { type: 'text/html' })
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `risk-report-${d.contract_title || id}.html`
-            a.click()
-            URL.revokeObjectURL(url)
-            showToast('Report downloaded', 'success')
-        } catch {
-            showToast('Failed to download report', 'error')
-        }
-        setReportLoading(false)
-    }
-
     // Phase 3 hooks
     const { data: plainEnglishData, isLoading: peLoading } = usePlainEnglish(id)
+    const { data: playbookEval } = usePlaybookEvaluation(id)
     const generatePe = useGeneratePlainEnglish()
     const askContract = useAskContract()
 
@@ -219,24 +371,22 @@ export default function ContractDetailPage() {
         setChatRetrievalMethod('')
 
         try {
-            const response = await fetch(`/api/v1/chat/contracts/${id}/ask`, {
+            const data = await apiFetch(`/chat/contracts/${id}/ask`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question: chatQuestion }),
             })
-
-            if (!response.ok) {
-                const err = await response.json()
+            if (!data.ok) {
+                const err = await data.json().catch(() => ({ detail: 'Failed to get answer' }))
                 setChatAnswer('Error: ' + (err.detail || 'Failed to get answer'))
                 setChatLoading(false)
                 setChatStreaming(false)
                 return
             }
-
-            const data = await response.json()
-            setChatAnswer(data.answer || '')
-            setChatRetrievalMethod(data.retrieval_method || '')
-            setChatSources(data.sources || [])
+            const result = await data.json()
+            setChatAnswer(result.answer || '')
+            setChatRetrievalMethod(result.retrieval_method || '')
+            setChatSources(result.sources || [])
         } catch (e: any) {
             setChatAnswer('Error: ' + (e.message || 'Failed to get answer'))
         }
@@ -257,33 +407,9 @@ export default function ContractDetailPage() {
         setRedlineLoading(false)
     }
 
-    const explainRiskMut = useExplainRisk()
     const updateContractMut = useUpdateContract()
-    const handleExplain = async (clauseId: string) => {
-        setExplainClauseId(clauseId)
-        setExplainLoading(true)
-        try {
-            const data = await explainRiskMut.mutateAsync(clauseId)
-            setExplainResult(data)
-        } catch (e: any) {
-            showToast(e.message || 'Failed to explain risk', 'error')
-        }
-        setExplainLoading(false)
-    }
 
     // --- Helpers ---
-    const scoreColor = (s: number) => {
-        if (s < 0.3) return 'text-green-600'
-        if (s < 0.6) return 'text-yellow-600'
-        if (s < 0.8) return 'text-orange-600'
-        return 'text-red-600'
-    }
-    const sevBadge = (s: string) => {
-        if (s === 'critical') return 'bg-red-100 text-red-700'
-        if (s === 'high') return 'bg-orange-100 text-orange-700'
-        if (s === 'medium') return 'bg-yellow-100 text-yellow-700'
-        return 'bg-blue-100 text-blue-700'
-    }
     const statusBadge = (s: string) => {
         const map: Record<string, string> = {
             draft: 'bg-gray-100 text-gray-700', in_review: 'bg-yellow-100 text-yellow-700',
@@ -300,13 +426,13 @@ export default function ContractDetailPage() {
         const msg = (contractError as any)?.message || 'Failed to load contract'
         return (
             <div className="p-8">
-                <button onClick={() => navigate('/contracts')} className="flex items-center gap-2 text-sm text-primary-lighter hover:text-primary mb-4">
+                <button onClick={() => navigate('/contracts')} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary mb-4">
                     <ArrowLeft size={16} /> Back to Contracts
                 </button>
                 <div className="bg-white rounded-xl border border-border p-12 text-center">
                     <AlertTriangle size={48} className="mx-auto mb-4 text-red-500" />
                     <h2 className="text-xl font-bold mb-2">{msg.includes('not found') ? 'Contract Not Found' : 'Error'}</h2>
-                    <p className="text-primary-lighter mb-4">{msg}</p>
+                    <p className="text-gray-500 mb-4">{msg}</p>
                     <button onClick={() => navigate('/contracts')} className="bg-primary text-white px-4 py-2 rounded-lg">
                         Back to Contracts
                     </button>
@@ -316,29 +442,7 @@ export default function ContractDetailPage() {
     }
     if (!data) return <SkeletonDetail />
 
-    const { contract, clauses, assessment, findings, obligations } = data
-
-    // Risk chart data
-    const severityChart = [
-        { name: 'Critical', value: findings?.filter((f: any) => f.severity === 'critical' && !f.is_resolved).length || 0, color: SEVERITY_COLORS.critical },
-        { name: 'High', value: findings?.filter((f: any) => f.severity === 'high' && !f.is_resolved).length || 0, color: SEVERITY_COLORS.high },
-        { name: 'Medium', value: findings?.filter((f: any) => f.severity === 'medium' && !f.is_resolved).length || 0, color: SEVERITY_COLORS.medium },
-        { name: 'Low', value: findings?.filter((f: any) => f.severity === 'low' && !f.is_resolved).length || 0, color: SEVERITY_COLORS.low },
-    ].filter(d => d.value > 0)
-
-    const typeCounts: Record<string, number> = {}
-    findings?.forEach((f: any) => {
-        if (!f.is_resolved) typeCounts[f.finding_type] = (typeCounts[f.finding_type] || 0) + 1
-    })
-    const typeChart = Object.entries(typeCounts).map(([name, value]) => ({
-        name: name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), value
-    }))
-
-    const scoreLayers = assessment ? [
-        { label: 'Playbook', score: assessment.playbook_score, weight: '35%', color: '#3B82F6' },
-        { label: 'Law', score: assessment.law_score, weight: '40%', color: '#8B5CF6' },
-        { label: 'Regulatory', score: assessment.regulatory_score, weight: '25%', color: '#F59E0B' },
-    ] : []
+    const { contract, clauses, obligations } = data
 
     // Approval stepper
     const stageNames = ['legal_review', 'finance_review', 'ceo_review']
@@ -350,14 +454,14 @@ export default function ContractDetailPage() {
     return (
         <div className="p-8">
             {/* Header */}
-            <button onClick={() => navigate('/contracts')} className="flex items-center gap-2 text-sm text-primary-lighter hover:text-primary mb-4 transition-colors">
+            <button onClick={() => navigate('/contracts')} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary mb-4 transition-colors">
                 <ArrowLeft size={16} /> Back to Contracts
             </button>
 
             <div className="flex items-start justify-between mb-6">
                 <div>
                     <h1 className="text-2xl font-bold">{contract.title}</h1>
-                    <div className="flex items-center gap-3 mt-1 text-sm text-primary-lighter">
+                    <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
                         <span>{contract.counterparty_name || 'No counterparty'}</span>
                         <span>·</span>
                         <span className="capitalize">{contract.contract_type}</span>
@@ -368,27 +472,11 @@ export default function ContractDetailPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    {assessment && (
-                        <div className="text-center mr-4">
-                            <div className={`text-4xl font-bold ${scoreColor(assessment.overall_score)}`}>
-                                {(assessment.overall_score * 100).toFixed(0)}
-                            </div>
-                            <p className="text-xs text-primary-lighter mt-1">Risk Score</p>
-                        </div>
-                    )}
                     <button
                         onClick={() => { setEditForm({ ...contract }); setShowEditModal(true) }}
                         className="border border-border px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors"
                     >
                         <Edit3 size={14} /> Edit
-                    </button>
-                    <button
-                        onClick={exportReport}
-                        disabled={reportLoading}
-                        className="border border-border px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    >
-                        {reportLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                        Export Report
                     </button>
                 </div>
             </div>
@@ -398,26 +486,26 @@ export default function ContractDetailPage() {
                 {tabs.map(t => (
                     <button key={t.key} onClick={() => setTab(t.key)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
-                            tab === t.key ? 'bg-white text-primary shadow-sm' : 'text-primary-lighter hover:text-primary'
+                            tab === t.key ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'
                         }`}>
                         <t.icon size={15} /> {t.label}
                     </button>
                 ))}
             </div>
 
-            {/* Overview */}
-            {tab === 'overview' && (
+            {/* Overview — part of Document */}
+            {tab === 'document' && (
                 <div className="space-y-6">
                     <div className="grid grid-cols-3 gap-4">
                         <div className="bg-white rounded-xl border border-border p-6">
                             <h3 className="font-semibold mb-4">Contract Details</h3>
                             <div className="space-y-3 text-sm">
-                                <div className="flex justify-between"><span className="text-primary-lighter">Status</span><span className="capitalize">{contract.status.replace('_', ' ')}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Governing Law</span><span>{contract.governing_law || '-'}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Auto Renewal</span><span>{contract.auto_renewal ? 'Yes' : 'No'}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Value</span><span>{contract.value_inr ? `₹${contract.value_inr.toLocaleString()}` : '-'}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Start Date</span><span>{contract.start_date || '-'}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">End Date</span><span>{contract.end_date || '-'}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Status</span><span className="capitalize">{contract.status.replace('_', ' ')}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Governing Law</span><span>{contract.governing_law || '-'}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Auto Renewal</span><span>{contract.auto_renewal ? 'Yes' : 'No'}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Value</span><span>{contract.value_inr ? `₹${contract.value_inr.toLocaleString()}` : '-'}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Start Date</span><span>{contract.start_date || '-'}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">End Date</span><span>{contract.end_date || '-'}</span></div>
                             </div>
                         </div>
                         <div className="bg-white rounded-xl border border-border p-6">
@@ -425,45 +513,25 @@ export default function ContractDetailPage() {
                             <div className="flex flex-wrap gap-2">
                                 {clauses?.length > 0 ? clauses.map((cl: any) => (
                                     <span key={cl.id} className="px-3 py-1 bg-primary/5 rounded-full text-xs font-medium capitalize">{cl.clause_type.replace('_', ' ')}</span>
-                                )) : <span className="text-sm text-primary-lighter">No clauses extracted</span>}
+                                )) : <span className="text-sm text-gray-500">No clauses extracted</span>}
                             </div>
                         </div>
                         <div className="bg-white rounded-xl border border-border p-6">
                             <h3 className="font-semibold mb-4">Quick Stats</h3>
                             <div className="space-y-3 text-sm">
-                                <div className="flex justify-between"><span className="text-primary-lighter">Clauses</span><span className="font-medium">{clauses?.length || 0}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Findings</span><span className="font-medium">{findings?.filter((f: any) => !f.is_resolved).length || 0}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Obligations</span><span className="font-medium">{obligations?.length || 0}</span></div>
-                                <div className="flex justify-between"><span className="text-primary-lighter">Approval Stage</span><span className="font-medium capitalize">{contract.status.replace('_', ' ')}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Clauses</span><span className="font-medium">{clauses?.length || 0}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Obligations</span><span className="font-medium">{obligations?.length || 0}</span></div>
+                                <div className="flex justify-between"><span className="text-gray-500">Approval Stage</span><span className="font-medium capitalize">{contract.status.replace('_', ' ')}</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Clauses */}
-            {tab === 'clauses' && (
-                <div className="space-y-3">
-                    {clauses?.length > 0 ? clauses.map((cl: any) => (
-                        <div key={cl.id} className="bg-white rounded-xl border border-border p-5 hover:shadow-sm transition-shadow">
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="px-2 py-0.5 bg-primary/10 rounded text-xs font-medium capitalize">{cl.clause_type.replace('_', ' ')}</span>
-                                <span className="text-xs text-primary-lighter">Confidence: {(cl.confidence_score * 100).toFixed(0)}%</span>
-                                {cl.page_number > 1 && <span className="text-xs text-primary-lighter">Page {cl.page_number}</span>}
-                            </div>
-                            <p className="text-sm text-primary-lighter leading-relaxed">{cl.clause_text}</p>
-                        </div>
-                    )) : (
-                        <div className="bg-white rounded-xl border border-border p-12 text-center">
-                            <BookOpen size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter">No clauses extracted from this contract</p>
-                        </div>
-                    )}
-                </div>
-            )}
+            {/* Clauses — now shown in Document via LegalReviewPanel */}
 
             {/* Structure */}
-            {tab === 'structure' && (
+            {tab === 'document' && (
                 <ContractStructure
                     structure={treeData?.structure || []}
                     doc_name={treeData?.doc_name || data?.contract?.title || 'Contract'}
@@ -475,7 +543,12 @@ export default function ContractDetailPage() {
             )}
 
             {/* PII */}
-            {tab === 'pii' && (
+            {tab === 'analysis' && (
+                <div className="mb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">PII & Data Privacy</h3>
+                </div>
+            )}
+            {tab === 'analysis' && (
                 <ContractPII
                     findings={piiData?.findings || []}
                     has_pii={piiData?.has_pii || false}
@@ -494,7 +567,12 @@ export default function ContractDetailPage() {
             )}
 
             {/* Plain English */}
-            {tab === 'plain-english' && (
+            {tab === 'analysis' && (
+                <div className="mt-8">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">Plain English Summary</h3>
+                </div>
+            )}
+            {tab === 'analysis' && (
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <h3 className="font-semibold flex items-center gap-2"><Sparkles size={18} /> Plain English Summary</h3>
@@ -523,7 +601,7 @@ export default function ContractDetailPage() {
                                             'bg-green-100 text-green-700'
                                         }`}>{s.risk_level}</span>
                                     </div>
-                                    <p className="text-sm text-primary-lighter mb-2 leading-relaxed">{s.plain_english}</p>
+                                    <p className="text-sm text-gray-500 mb-2 leading-relaxed">{s.plain_english}</p>
                                     {s.suggestions && <p className="text-xs text-blue-600">💡 {s.suggestions}</p>}
                                 </div>
                             ))}
@@ -531,81 +609,20 @@ export default function ContractDetailPage() {
                     ) : (
                         <div className="bg-white rounded-xl border border-border p-12 text-center">
                             <Sparkles size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter">No plain English summaries yet</p>
-                            <p className="text-sm text-primary-lighter mt-1">Click Generate to analyze clauses</p>
+                            <p className="text-gray-500">No plain English summaries yet</p>
+                            <p className="text-sm text-gray-500 mt-1">Click Generate to analyze clauses</p>
                         </div>
                     )}
                 </div>
             )}
 
-            {/* Explainable AI */}
-            {tab === 'explain' && (
-                <div className="space-y-4">
-                    <h3 className="font-semibold flex items-center gap-2"><Zap size={18} /> Explainable Risk Analysis</h3>
-                    <p className="text-sm text-primary-lighter">Click a clause to see why it was flagged as risky.</p>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            {clauses?.map((cl: any) => (
-                                <button
-                                    key={cl.id}
-                                    onClick={() => handleExplain(cl.id)}
-                                    className={`w-full text-left bg-white rounded-xl border p-3 hover:shadow-sm transition-shadow ${
-                                        explainClauseId === cl.id ? 'border-primary ring-1 ring-primary' : 'border-border'
-                                    }`}
-                                >
-                                    <span className="text-xs font-medium capitalize">{cl.clause_type.replace('_', ' ')}</span>
-                                    <p className="text-xs text-primary-lighter mt-1 truncate">{cl.clause_text}</p>
-                                </button>
-                            ))}
-                        </div>
-                        <div className="bg-white rounded-xl border border-border p-5">
-                            {explainLoading ? (
-                                <div className="flex items-center justify-center h-40">
-                                    <Loader2 size={24} className="animate-spin text-primary" />
-                                </div>
-                            ) : explainResult ? (
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-2xl font-bold">{explainResult.fairness_grade}</span>
-                                        <span className="text-sm text-primary-lighter">Score: {explainResult.fairness_score}/100</span>
-                                    </div>
-                                    {explainResult.red_flags?.length > 0 && (
-                                        <div>
-                                            <h4 className="text-sm font-medium text-red-600 mb-2">Red Flags</h4>
-                                            {explainResult.red_flags.map((rf: any, i: number) => (
-                                                <div key={i} className="bg-red-50 rounded-lg p-3 mb-2">
-                                                    <p className="text-sm font-medium">{rf.title}</p>
-                                                    <p className="text-xs text-primary-lighter mt-1">{rf.explanation}</p>
-                                                    {rf.suggestion && <p className="text-xs text-blue-600 mt-1">→ {rf.suggestion}</p>}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {explainResult.warnings?.length > 0 && (
-                                        <div>
-                                            <h4 className="text-sm font-medium text-yellow-600 mb-2">Warnings</h4>
-                                            {explainResult.warnings.map((w: any, i: number) => (
-                                                <div key={i} className="bg-yellow-50 rounded-lg p-3 mb-2">
-                                                    <p className="text-sm font-medium">{w.title}</p>
-                                                    <p className="text-xs text-primary-lighter">{w.explanation}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="text-center text-primary-lighter py-12">
-                                    <Zap size={32} className="mx-auto mb-2 text-gray-300" />
-                                    <p className="text-sm">Select a clause to see AI explanation</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+            {/* Redline Diff */}
+            {tab === 'analysis' && (
+                <div className="mt-8">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">Redline Comparison</h3>
                 </div>
             )}
-
-            {/* Redline Diff */}
-            {tab === 'redline' && (
+            {tab === 'analysis' && (
                 <div className="space-y-4">
                     <h3 className="font-semibold flex items-center gap-2"><Scale size={18} /> Redline Comparison</h3>
 
@@ -634,13 +651,13 @@ export default function ContractDetailPage() {
                     {redlineMode !== 'docx' && (
                         <div className="flex gap-3 items-end">
                             <div className="flex-1">
-                                <label className="text-xs text-primary-lighter block mb-1">This contract</label>
+                                <label className="text-xs text-gray-500 block mb-1">This contract</label>
                                 <div className="px-3 py-2 border border-border rounded-lg text-sm bg-gray-50">{contract.title}</div>
                             </div>
 
                             {redlineMode === 'version' ? (
                                 <div className="flex-1">
-                                    <label className="text-xs text-primary-lighter block mb-1">Select Version</label>
+                                    <label className="text-xs text-gray-500 block mb-1">Select Version</label>
                                     <select
                                         value={selectedVersionId}
                                         onChange={e => {
@@ -662,7 +679,7 @@ export default function ContractDetailPage() {
                                 </div>
                             ) : (
                                 <div className="flex-1">
-                                    <label className="text-xs text-primary-lighter block mb-1">Compare with (Contract ID)</label>
+                                    <label className="text-xs text-gray-500 block mb-1">Compare with (Contract ID)</label>
                                     <input
                                         type="text"
                                         value={redlineOtherId}
@@ -698,14 +715,13 @@ export default function ContractDetailPage() {
                                             item.label === 'removed' ? 'bg-gray-100 text-gray-700' :
                                             'bg-yellow-100 text-yellow-700'
                                         }`}>{item.label.replace('_', ' ')}</span>
-                                        <span className="text-xs text-primary-lighter">Similarity: {(item.similarity_score * 100).toFixed(0)}%</span>
-                                        <span className="text-xs text-primary-lighter">Risk: {item.risk_delta}</span>
+                                        <span className="text-xs text-gray-500">Similarity: {(item.similarity_score * 100).toFixed(0)}%</span>
                                     </div>
                                     <p className="text-sm font-medium mb-2">{item.change_summary}</p>
                                     {item.key_differences?.length > 0 && (
                                         <ul className="space-y-1 mb-3">
                                             {item.key_differences.map((diff: string, j: number) => (
-                                                <li key={j} className="text-xs text-primary-lighter flex items-start gap-1">
+                                                <li key={j} className="text-xs text-gray-500 flex items-start gap-1">
                                                     <ChevronRight size={12} className="mt-0.5 shrink-0" /> {diff}
                                                 </li>
                                             ))}
@@ -715,13 +731,13 @@ export default function ContractDetailPage() {
                                         {item.old_text && (
                                             <div className="bg-red-50 rounded p-2">
                                                 <p className="text-red-600 font-medium mb-1">Original</p>
-                                                <p className="text-primary-lighter">{item.old_text}</p>
+                                                <p className="text-gray-500">{item.old_text}</p>
                                             </div>
                                         )}
                                         {item.new_text && (
                                             <div className="bg-green-50 rounded p-2">
                                                 <p className="text-green-600 font-medium mb-1">New</p>
-                                                <p className="text-primary-lighter">{item.new_text}</p>
+                                                <p className="text-gray-500">{item.new_text}</p>
                                             </div>
                                         )}
                                     </div>
@@ -879,7 +895,7 @@ export default function ContractDetailPage() {
                                 <button
                                     key={q}
                                     onClick={() => { setChatQuestion(q); handleChat() }}
-                                    className="px-2 py-1 bg-gray-100 rounded text-xs text-primary-lighter hover:bg-gray-200"
+                                    className="px-2 py-1 bg-gray-100 rounded text-xs text-gray-500 hover:bg-gray-200"
                                 >
                                     {q}
                                 </button>
@@ -889,49 +905,7 @@ export default function ContractDetailPage() {
                 </div>
             )}
 
-            {/* Highlights */}
-            {tab === 'highlights' && (
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="font-semibold flex items-center gap-2"><Highlighter size={18} /> Clause Highlights</h3>
-                        <button
-                            onClick={() => id && generateHighlights.mutate(id)}
-                            disabled={generateHighlights.isPending}
-                            className="px-3 py-1.5 bg-primary text-white rounded-lg text-sm flex items-center gap-2 hover:bg-primary-light disabled:opacity-50"
-                        >
-                            {generateHighlights.isPending ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-                            Generate Highlights
-                        </button>
-                    </div>
-                    {(highlightsData?.highlights || []).length === 0 && (
-                        <div className="bg-white rounded-xl border border-border p-8 text-center text-sm text-primary-lighter">
-                            No highlights generated yet. Click "Generate Highlights" to extract clause bounding boxes from the PDF.
-                        </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                        {(highlightsData?.highlights || []).map((h: any, i: number) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.05 }}
-                                className="bg-white rounded-xl border border-border p-4"
-                            >
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">{h.clause_type}</span>
-                                    <span className="text-xs text-primary-lighter">Page {h.page_number}</span>
-                                </div>
-                                <p className="text-sm text-gray-700 line-clamp-3">{h.clause_text}</p>
-                                {h.bounding_box && (
-                                    <div className="mt-2 text-xs text-primary-lighter">
-                                        Bbox: x={h.bounding_box.x?.toFixed(2)}, y={h.bounding_box.y?.toFixed(2)}
-                                    </div>
-                                )}
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            {/* Highlights — removed from UI, accessible via API if needed */}
 
             {/* Processing Pipeline */}
             {tab === 'processing' && (
@@ -941,12 +915,12 @@ export default function ContractDetailPage() {
                         <div className="relative">
                             {/* Pipeline steps */}
                             {[
-                                { step: 1, label: 'Document Ingestion', desc: 'PDF parsed with Docling', icon: FileText, done: true },
-                                { step: 2, label: 'Chunking', desc: '400-page document split into semantic chunks', icon: Layers, done: true },
-                                { step: 3, label: 'Clause Extraction', desc: `${clauses?.length || 0} clauses identified via GPT-4o-mini`, icon: BookOpen, done: clauses?.length > 0 },
+                                { step: 1, label: 'Document Ingestion', desc: 'PDF parsed and text extracted', icon: FileText, done: !!contract.parsed_text || !!contract.pdf_path },
+                                { step: 2, label: 'Semantic Chunking', desc: 'Document split into analysable sections', icon: Layers, done: !!contract.parsed_text },
+                                { step: 3, label: 'Clause Extraction', desc: `${clauses?.length || 0} clauses identified via AI analysis`, icon: BookOpen, done: clauses?.length > 0 },
                                 { step: 4, label: 'Entity Recognition', desc: 'Parties, dates, values, governing law extracted', icon: Zap, done: !!contract.counterparty_name },
-                                { step: 5, label: 'Risk Assessment', desc: assessment ? `Score: ${(assessment.overall_score * 100).toFixed(0)}/100` : 'Pending', icon: Shield, done: !!assessment },
-                                { step: 6, label: 'Knowledge Graph', desc: 'Nodes linked in Neo4j', icon: Layers, done: true },
+                                { step: 5, label: 'Playbook Evaluation', desc: `${playbookEval?.violations?.length || 0} playbook checks evaluated`, icon: Shield, done: playbookEval != null },
+                                { step: 6, label: 'Knowledge Graph', desc: 'Contract linked to organizational knowledge graph', icon: Layers, done: false },
                             ].map((s, i, arr) => (
                                 <div key={s.step} className="flex gap-4">
                                     <div className="flex flex-col items-center">
@@ -957,7 +931,7 @@ export default function ContractDetailPage() {
                                     </div>
                                     <div className="pb-6 flex-1">
                                         <p className="font-medium text-sm">{s.label}</p>
-                                        <p className="text-xs text-primary-lighter">{s.desc}</p>
+                                        <p className="text-xs text-gray-500">{s.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -966,108 +940,13 @@ export default function ContractDetailPage() {
                 </div>
             )}
 
-            {/* Risk */}
-            {tab === 'risk' && (
-                <div className="space-y-6">
-                    {assessment ? (
-                        <>
-                            <div className="flex items-center justify-between">
-                                <h3 className="font-semibold flex items-center gap-2"><ShieldAlert size={18} /> Risk Assessment</h3>
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            const data = await riskReportMut.mutateAsync(id!)
-                                            const blob = new Blob([data.report_html], { type: 'text/html' })
-                                            const url = URL.createObjectURL(blob)
-                                            const a = document.createElement('a')
-                                            a.href = url
-                                            a.download = `Risk_Report_${data.contract_title || id}.html`
-                                            a.click()
-                                            URL.revokeObjectURL(url)
-                                        } catch {
-                                            showToast('Failed to download report', 'error')
-                                        }
-                                    }}
-                                    className="px-3 py-1.5 bg-primary text-white rounded-lg text-sm flex items-center gap-2 hover:bg-primary-light"
-                                >
-                                    <FileText size={14} /> Download Report
-                                </button>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                {scoreLayers.map(layer => (
-                                    <div key={layer.label} className="bg-white rounded-xl border border-border p-6 text-center">
-                                        <p className="text-sm text-primary-lighter mb-2">{layer.label} ({layer.weight})</p>
-                                        <p className={`text-3xl font-bold ${scoreColor(layer.score)}`}>{(layer.score * 100).toFixed(0)}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                                {severityChart.length > 0 && (
-                                    <div className="bg-white rounded-xl border border-border p-6">
-                                        <h3 className="font-semibold mb-4">Findings by Severity</h3>
-                                        <ResponsiveContainer width="100%" height={200}>
-                                            <PieChart>
-                                                <Pie data={severityChart} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
-                                                    {severityChart.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                                                </Pie>
-                                                <Tooltip />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                )}
-                                {typeChart.length > 0 && (
-                                    <div className="bg-white rounded-xl border border-border p-6">
-                                        <h3 className="font-semibold mb-4">Findings by Type</h3>
-                                        <ResponsiveContainer width="100%" height={200}>
-                                            <BarChart data={typeChart}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                                                <YAxis />
-                                                <Tooltip />
-                                                <Bar dataKey="value" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                )}
-                            </div>
-
-                            <h3 className="font-semibold">Open Findings</h3>
-                            <div className="space-y-2">
-                                {findings?.filter((f: any) => !f.is_resolved).map((f: any) => (
-                                    <div key={f.id} className="bg-white rounded-xl border border-border p-4 flex items-start gap-3">
-                                        <AlertTriangle size={16} className={f.severity === 'critical' ? 'text-red-600' : f.severity === 'high' ? 'text-orange-600' : 'text-yellow-600'} />
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${sevBadge(f.severity)}`}>{f.severity}</span>
-                                                <span className="text-xs text-primary-lighter capitalize">{f.finding_type.replace('_', ' ')}</span>
-                                            </div>
-                                            <p className="text-sm font-medium">{f.title}</p>
-                                            <p className="text-xs text-primary-lighter">{f.description}</p>
-                                            {f.suggested_amendment && <p className="text-xs text-blue-600 mt-1">Suggestion: {f.suggested_amendment}</p>}
-                                        </div>
-                                    </div>
-                                ))}
-                                {findings?.filter((f: any) => !f.is_resolved).length === 0 && (
-                                    <div className="bg-white rounded-xl border border-border p-8 text-center">
-                                        <CheckCircle size={32} className="mx-auto mb-2 text-green-500" />
-                                        <p className="text-sm text-primary-lighter">All findings resolved</p>
-                                    </div>
-                                )}
-                            </div>
-                        </>
-                    ) : (
-                        <div className="bg-white rounded-xl border border-border p-12 text-center">
-                            <Shield size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="font-medium">Risk assessment pending</p>
-                            <p className="text-sm text-primary-lighter mt-1">Run analysis to see risk scores and findings</p>
-                        </div>
-                    )}
+            {/* Obligations */}
+            {tab === 'workflow' && (
+                <div className="mb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">Obligations</h3>
                 </div>
             )}
-
-            {/* Obligations */}
-            {tab === 'obligations' && (
+            {tab === 'workflow' && (
                 <div className="space-y-3">
                     {obligations?.length > 0 ? obligations.map((o: any) => (
                         <div key={o.id} className="bg-white rounded-xl border border-border p-5 flex items-center gap-4">
@@ -1076,7 +955,7 @@ export default function ContractDetailPage() {
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm font-medium">{o.description}</p>
-                                <p className="text-xs text-primary-lighter">Due: {o.due_date || 'No date'} · Type: {o.obligation_type}</p>
+                                <p className="text-xs text-gray-500">Due: {o.due_date || 'No date'} · Type: {o.obligation_type}</p>
                             </div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${o.status === 'completed' ? 'bg-green-100 text-green-700' : o.status === 'overdue' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                 {o.status}
@@ -1085,14 +964,19 @@ export default function ContractDetailPage() {
                     )) : (
                         <div className="bg-white rounded-xl border border-border p-12 text-center">
                             <CheckCircle size={40} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter">No obligations extracted from this contract</p>
+                            <p className="text-gray-500">No obligations extracted from this contract</p>
                         </div>
                     )}
                 </div>
             )}
 
             {/* Approvals — Horizontal Stepper */}
-            {tab === 'approvals' && (
+            {tab === 'workflow' && (
+                <div className="mt-8">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">Approval Workflow</h3>
+                </div>
+            )}
+            {tab === 'workflow' && (
                 <div className="space-y-6">
                     {/* Stepper */}
                     <div className="bg-white rounded-xl border border-border p-6">
@@ -1119,7 +1003,7 @@ export default function ContractDetailPage() {
                                                      <span className="text-sm">{i + 1}</span>}
                                                 </div>
                                                 <p className="text-xs font-medium capitalize">{name.replace('_', ' ')}</p>
-                                                <p className="text-xs text-primary-lighter">{stage?.approver_name || ''}</p>
+                                                <p className="text-xs text-gray-500">{stage?.approver_name || ''}</p>
                                                 {isCurrent && (
                                                     <div className="flex gap-2 mt-2">
                                                         <button
@@ -1150,7 +1034,7 @@ export default function ContractDetailPage() {
                             </div>
                         ) : (
                             <div className="text-center py-8">
-                                <p className="text-primary-lighter">No approval workflow started</p>
+                                <p className="text-gray-500">No approval workflow started</p>
                                 <button
                                     onClick={handleSubmitForApproval}
                                     disabled={actionLoading === 'submit'}
@@ -1193,7 +1077,12 @@ export default function ContractDetailPage() {
             )}
 
             {/* Comments */}
-            {tab === 'comments' && (
+            {tab === 'workflow' && (
+                <div className="mt-8">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">Comments & Discussion</h3>
+                </div>
+            )}
+            {tab === 'workflow' && (
                 <div className="space-y-4">
                     <div className="bg-white rounded-xl border border-border p-4">
                         <div className="flex gap-3">
@@ -1228,8 +1117,8 @@ export default function ContractDetailPage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="text-sm font-medium">{c.author_name}</span>
-                                        <span className="text-xs text-primary-lighter capitalize">{c.author_role}</span>
-                                        <span className="text-xs text-primary-lighter">{new Date(c.created_at).toLocaleDateString()}</span>
+                                        <span className="text-xs text-gray-500 capitalize">{c.author_role}</span>
+                                        <span className="text-xs text-gray-500">{new Date(c.created_at).toLocaleDateString()}</span>
                                     </div>
                                     <p className="text-sm">{c.content}</p>
                                 </div>
@@ -1237,31 +1126,21 @@ export default function ContractDetailPage() {
                         )) : (
                             <div className="bg-white rounded-xl border border-border p-12 text-center">
                                 <MessageSquare size={40} className="mx-auto mb-3 text-gray-300" />
-                                <p className="text-primary-lighter">No comments yet</p>
+                                <p className="text-gray-500">No comments yet</p>
                             </div>
                         )}
                     </div>
                 </div>
             )}
 
-            {/* PDF */}
-            {tab === 'pdf' && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="bg-white rounded-xl border border-border overflow-hidden"
-                    style={{ height: 750 }}
-                >
-                    {contract.pdf_url || contract.pdf_path ? (
-                        <PDFViewer url={contract.pdf_url || `/api/v1/contracts/${contract.id}/pdf`} contractId={contract.id} />
-                    ) : (
-                        <div className="text-center py-12">
-                            <FileText size={48} className="mx-auto mb-3 text-gray-300" />
-                            <p className="text-primary-lighter font-medium">PDF preview not available</p>
-                            <p className="text-sm text-primary-lighter mt-1">The contract was uploaded without a PDF file</p>
-                        </div>
-                    )}
-                </motion.div>
+            {/* PDF + Legal Review */}
+            {tab === 'document' && (
+                <LegalReviewPanel
+                    contract={contract}
+                    clauses={clauses || []}
+                    plainEnglishData={plainEnglishData}
+                    evaluation={playbookEval}
+                />
             )}
         </div>
     )

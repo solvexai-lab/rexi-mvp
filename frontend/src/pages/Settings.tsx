@@ -64,35 +64,35 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">Company Name</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">Company Name</label>
                         <input value={org.name || ''} onChange={e => setOrg({...org, name: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">Industry</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">Industry</label>
                         <select value={org.industry || 'manufacturing'} onChange={e => setOrg({...org, industry: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm">
                             {['manufacturing', 'saas', 'healthcare', 'fintech', 'retail', 'logistics'].map(i => <option key={i} value={i}>{i}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">Revenue Range</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">Revenue Range</label>
                         <select value={org.revenue_range || '100-300cr'} onChange={e => setOrg({...org, revenue_range: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm">
                             {['50-100cr', '100-300cr', '300-500cr'].map(r => <option key={r} value={r}>{r}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">Employee Count</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">Employee Count</label>
                         <input type="number" value={org.employee_count || 0} onChange={e => setOrg({...org, employee_count: parseInt(e.target.value)})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                     <div className="col-span-2">
-                        <label className="text-xs text-primary-lighter uppercase font-medium">Registered Address</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">Registered Address</label>
                         <input value={org.address || ''} onChange={e => setOrg({...org, address: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">GSTIN</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">GSTIN</label>
                         <input value={org.gstin || ''} onChange={e => setOrg({...org, gstin: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">CIN</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">CIN</label>
                         <input value={org.cin || ''} onChange={e => setOrg({...org, cin: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                 </div>
@@ -110,11 +110,11 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">DPO Name</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">DPO Name</label>
                         <input value={org.dpo_name || ''} onChange={e => setOrg({...org, dpo_name: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                     <div>
-                        <label className="text-xs text-primary-lighter uppercase font-medium">DPO Email</label>
+                        <label className="text-xs text-gray-500 uppercase font-medium">DPO Email</label>
                         <input value={org.dpo_email || ''} onChange={e => setOrg({...org, dpo_email: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm" />
                     </div>
                 </div>
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                     <Users size={20} className="text-primary" />
                     <h2 className="font-semibold">Approval Chain</h2>
                 </div>
-                <p className="text-sm text-primary-lighter">
+                <p className="text-sm text-gray-500">
                     Approval chains are managed per-contract in the contract detail page.
                 </p>
             </motion.div>

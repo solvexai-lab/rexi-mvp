@@ -94,27 +94,27 @@ export default function PlaybookPage() {
                     <h3 className="font-semibold mb-4">New Rule</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs text-primary-lighter uppercase font-medium">Rule Name</label>
+                            <label className="text-xs text-gray-500 uppercase font-medium">Rule Name</label>
                             <input value={form.rule_name} onChange={e => setForm({...form, rule_name: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Max Liability Cap" />
                         </div>
                         <div>
-                            <label className="text-xs text-primary-lighter uppercase font-medium">Clause Type</label>
+                            <label className="text-xs text-gray-500 uppercase font-medium">Clause Type</label>
                             <select value={form.rule_type} onChange={e => setForm({...form, rule_type: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 {RULE_TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs text-primary-lighter uppercase font-medium">Condition</label>
+                            <label className="text-xs text-gray-500 uppercase font-medium">Condition</label>
                             <select value={form.condition} onChange={e => setForm({...form, condition: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 {CONDITIONS.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs text-primary-lighter uppercase font-medium">Threshold / Value</label>
+                            <label className="text-xs text-gray-500 uppercase font-medium">Threshold / Value</label>
                             <input value={form.threshold_value} onChange={e => setForm({...form, threshold_value: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2000000" />
                         </div>
                         <div>
-                            <label className="text-xs text-primary-lighter uppercase font-medium">Severity</label>
+                            <label className="text-xs text-gray-500 uppercase font-medium">Severity</label>
                             <select value={form.severity} onChange={e => setForm({...form, severity: e.target.value})} className="w-full mt-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 {SEVERITIES.map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
@@ -135,13 +135,13 @@ export default function PlaybookPage() {
                 <table className="w-full">
                     <thead className="bg-gray-50 border-b border-border">
                         <tr>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Rule Name</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Type</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Condition</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Threshold</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Severity</th>
-                            <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Status</th>
-                            <th className="text-right text-xs font-medium text-primary-lighter uppercase px-6 py-3">Actions</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Rule Name</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Type</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Condition</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Threshold</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Severity</th>
+                            <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Status</th>
+                            <th className="text-right text-xs font-medium text-gray-500 uppercase px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -165,8 +165,8 @@ export default function PlaybookPage() {
                             <tr>
                                 <td colSpan={7} className="px-6 py-12 text-center">
                                     <Shield size={40} className="mx-auto mb-3 text-gray-300" />
-                                    <p className="text-primary-lighter font-medium">No playbook rules yet</p>
-                                    <p className="text-sm text-primary-lighter mt-1">Create your first rule to start auto-checking contracts</p>
+                                    <p className="text-gray-500 font-medium">No playbook rules yet</p>
+                                    <p className="text-sm text-gray-500 mt-1">Create your first rule to start auto-checking contracts</p>
                                 </td>
                             </tr>
                         )}

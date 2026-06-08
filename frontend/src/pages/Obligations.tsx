@@ -269,7 +269,7 @@ export default function ObligationsPage() {
                         className={`bg-white rounded-xl border p-6 text-center cursor-pointer transition-colors ${!statusFilter ? 'border-primary ring-1 ring-primary/20' : 'border-border hover:border-primary/30'}`}
                     >
                         <ClipboardList size={20} className="mx-auto mb-2 text-blue-600" />
-                        <p className="text-sm text-primary-lighter mb-1">Total</p>
+                        <p className="text-sm text-gray-500 mb-1">Total</p>
                         <p className="text-3xl font-bold text-blue-600">{dashboard.total}</p>
                     </div>
                     <div
@@ -277,7 +277,7 @@ export default function ObligationsPage() {
                         className={`bg-white rounded-xl border p-6 text-center cursor-pointer transition-colors ${statusFilter === 'pending' ? 'border-primary ring-1 ring-primary/20' : 'border-border hover:border-primary/30'}`}
                     >
                         <Clock size={20} className="mx-auto mb-2 text-yellow-600" />
-                        <p className="text-sm text-primary-lighter mb-1">Pending</p>
+                        <p className="text-sm text-gray-500 mb-1">Pending</p>
                         <p className="text-3xl font-bold text-yellow-600">{dashboard.pending}</p>
                     </div>
                     <div
@@ -285,7 +285,7 @@ export default function ObligationsPage() {
                         className={`bg-white rounded-xl border p-6 text-center cursor-pointer transition-colors ${statusFilter === 'completed' ? 'border-primary ring-1 ring-primary/20' : 'border-border hover:border-primary/30'}`}
                     >
                         <CheckCircle size={20} className="mx-auto mb-2 text-green-600" />
-                        <p className="text-sm text-primary-lighter mb-1">Completed</p>
+                        <p className="text-sm text-gray-500 mb-1">Completed</p>
                         <p className="text-3xl font-bold text-green-600">{dashboard.completed}</p>
                     </div>
                     <div
@@ -293,7 +293,7 @@ export default function ObligationsPage() {
                         className={`bg-white rounded-xl border p-6 text-center cursor-pointer transition-colors ${statusFilter === 'overdue' ? 'border-primary ring-1 ring-primary/20' : 'border-border hover:border-primary/30'}`}
                     >
                         <AlertTriangle size={20} className="mx-auto mb-2 text-red-600" />
-                        <p className="text-sm text-primary-lighter mb-1">Overdue</p>
+                        <p className="text-sm text-gray-500 mb-1">Overdue</p>
                         <p className="text-3xl font-bold text-red-600">{dashboard.overdue}</p>
                     </div>
                 </div>
@@ -320,11 +320,11 @@ export default function ObligationsPage() {
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b border-border">
                                 <tr>
-                                    <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Description</th>
-                                    <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Type</th>
-                                    <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Due Date</th>
-                                    <th className="text-left text-xs font-medium text-primary-lighter uppercase px-6 py-3">Status</th>
-                                    <th className="text-right text-xs font-medium text-primary-lighter uppercase px-6 py-3">Action</th>
+                                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Description</th>
+                                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Type</th>
+                                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Due Date</th>
+                                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Status</th>
+                                    <th className="text-right text-xs font-medium text-gray-500 uppercase px-6 py-3">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -367,8 +367,8 @@ export default function ObligationsPage() {
                                     <tr>
                                         <td colSpan={5} className="px-6 py-12 text-center">
                                             <ClipboardList size={40} className="mx-auto mb-3 text-gray-300" />
-                                            <p className="text-primary-lighter font-medium">No obligations tracked yet</p>
-                                            <p className="text-sm text-primary-lighter mt-1">Upload a contract to auto-extract obligations</p>
+                                            <p className="text-gray-500 font-medium">No obligations tracked yet</p>
+                                            <p className="text-sm text-gray-500 mt-1">Upload a contract to auto-extract obligations</p>
                                         </td>
                                     </tr>
                                 )}

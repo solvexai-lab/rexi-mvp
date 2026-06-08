@@ -7,7 +7,7 @@ import time
 def start_backend():
     log = open(r'd:\rexi-kn\rexi-mvp\backend\server.log', 'w')
     proc = subprocess.Popen(
-        [sys.executable, '-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'],
+        [sys.executable, '-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8001'],
         cwd=r'd:\rexi-kn\rexi-mvp\backend',
         stdout=log,
         stderr=subprocess.STDOUT,
@@ -18,7 +18,7 @@ def start_backend():
 def start_frontend():
     log = open(r'd:\rexi-kn\rexi-mvp\frontend\server.log', 'w')
     proc = subprocess.Popen(
-        [sys.executable, '-m', 'http.server', '5173', '--directory', 'dist'],
+        ['cmd', '/c', 'npx', 'vite', 'preview', '--port', '5173'],
         cwd=r'd:\rexi-kn\rexi-mvp\frontend',
         stdout=log,
         stderr=subprocess.STDOUT,
@@ -33,5 +33,5 @@ if __name__ == '__main__':
     frontend_pid = start_frontend()
     print(f'Frontend started on PID {frontend_pid}')
     print('Both servers should be up in ~40 seconds.')
-    print('Backend: http://127.0.0.1:8000')
+    print('Backend: http://127.0.0.1:8001')
     print('Frontend: http://127.0.0.1:5173')

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from datetime import datetime
+from datetime import datetime, timezone
 from app.core.database import get_session
 from app.models.tables import Contract, ApprovalStage, Notification
 
@@ -35,7 +35,7 @@ async def submit_for_approval(contract_id: str, org_id: str = "demo-org", sessio
     if not contract:
         raise HTTPException(status_code=404, detail="Contract not found")
     if contract.status not in ["draft", "rejected"]:
-        return {"error": f"Cannot submit from status {contract.status}"}, 400
+        raise HTTPException(status_code=400, detail=f"Cannot submit from status {contract.status}")
     contract.status = "in_review"
 
     for stage_name in APPROVAL_STAGES:
@@ -62,10 +62,10 @@ async def approve_stage(stage_id: str, comment: str = "", session: AsyncSession 
     if not stage:
         raise HTTPException(status_code=404, detail="Stage not found")
     if stage.status != "pending":
-        return {"error": "Stage already resolved"}, 400
+        raise HTTPException(status_code=400, detail="Stage already resolved")
     stage.status = "approved"
     stage.comment = comment
-    stage.resolved_at = datetime.utcnow()
+    stage.resolved_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     # Check if all stages approved
     res = await session.execute(
@@ -93,10 +93,10 @@ async def reject_stage(stage_id: str, comment: str = "", session: AsyncSession =
     if not stage:
         raise HTTPException(status_code=404, detail="Stage not found")
     if stage.status != "pending":
-        return {"error": "Stage already resolved"}, 400
+        raise HTTPException(status_code=400, detail="Stage already resolved")
     stage.status = "rejected"
     stage.comment = comment
-    stage.resolved_at = datetime.utcnow()
+    stage.resolved_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     cres = await session.execute(select(Contract).where(Contract.id == stage.contract_id))
     contract = cres.scalar_one_or_none()
@@ -120,7 +120,7 @@ async def transition_status(contract_id: str, new_status: str, org_id: str = "de
     current = contract.status
     allowed = VALID_TRANSITIONS.get(current, [])
     if new_status not in allowed:
-        return {"error": f"Cannot transition from {current} to {new_status}. Allowed: {allowed}"}, 400
+        raise HTTPException(status_code=400, detail=f"Cannot transition from {current} to {new_status}. Allowed: {allowed}")
     contract.status = new_status
     notify = Notification(
         org_id=org_id, title="Contract status changed",

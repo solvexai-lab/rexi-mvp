@@ -13,8 +13,7 @@ router = APIRouter(prefix="/api/v1/highlights", tags=["highlights"])
 
 @router.get("/contracts/{contract_id}")
 async def get_highlights(contract_id: str, session: AsyncSession = Depends(get_session)):
-    """Get all clause highlights for a contract, enriched with risk colors."""
-    from app.models.tables import ContractClause, RiskFinding, RiskAssessment
+    """Get all clause highlights for a contract."""
     result = await session.execute(
         select(ClauseHighlight).where(ClauseHighlight.contract_id == contract_id)
     )
@@ -26,27 +25,6 @@ async def get_highlights(contract_id: str, session: AsyncSession = Depends(get_s
     if clause_ids:
         res = await session.execute(select(ContractClause).where(ContractClause.id.in_(clause_ids)))
         clause_map = {c.id: c for c in res.scalars().all()}
-
-    # Fetch risk findings for this contract
-    risk_color_map = {
-        "critical": "rgba(239, 68, 68, 0.4)",
-        "high": "rgba(249, 115, 22, 0.4)",
-        "medium": "rgba(245, 158, 11, 0.4)",
-        "low": "rgba(34, 197, 94, 0.3)",
-    }
-    finding_colors = {}
-    if clause_ids:
-        # Get assessment ID for this contract
-        assess_res = await session.execute(
-            select(RiskAssessment).where(RiskAssessment.contract_id == contract_id)
-        )
-        assessment = assess_res.scalar_one_or_none()
-        if assessment:
-            findings_res = await session.execute(
-                select(RiskFinding).where(RiskFinding.assessment_id == assessment.id)
-            )
-            for f in findings_res.scalars().all():
-                finding_colors[f.finding_type] = risk_color_map.get(f.severity, risk_color_map["low"])
 
     return {
         "contract_id": contract_id,
@@ -63,7 +41,6 @@ async def get_highlights(contract_id: str, session: AsyncSession = Depends(get_s
                     "width": h.width,
                     "height": h.height,
                     "color": h.color,
-                    "risk_color": finding_colors.get(h.clause_type, "rgba(59, 130, 246, 0.3)"),
                 },
             }
             for h in highlights

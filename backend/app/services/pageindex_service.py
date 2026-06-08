@@ -50,7 +50,7 @@ class PageIndexService:
     def __init__(self):
         self._gemini_key = GEMINI_API_KEY
         self._enabled = True
-        self._model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        self._model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     def status(self) -> Dict:
         return {
