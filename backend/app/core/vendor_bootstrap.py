@@ -36,6 +36,11 @@ def bootstrap() -> None:
     if pi.exists():
         paths_to_add.append(str(pi))
 
+    # Also add app/vendors/ for vendored packages copied into the backend
+    vendors_dir = Path(__file__).resolve().parent.parent / "vendors"
+    if vendors_dir.exists() and str(vendors_dir) not in sys.path:
+        sys.path.insert(0, str(vendors_dir))
+
     # Prepend so vendor code shadows pip packages if needed
     for p in reversed(paths_to_add):
         if p not in sys.path:
