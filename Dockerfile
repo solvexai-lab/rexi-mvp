@@ -19,6 +19,9 @@ RUN apt-get update && apt-get install -y \
     libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Force cache bust — change this comment to invalidate all layers below
+# bust: 2024-06-09-v1
+
 # Install Python dependencies
 COPY backend/requirements-prod.txt .
 RUN pip install --no-cache-dir -r requirements-prod.txt
