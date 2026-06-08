@@ -35,11 +35,24 @@ from app.routers import (
 )
 
 
+import asyncio
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: create tables + seed. Shutdown: cleanup."""
-    await init_db()
-    await seed_database()
+    """Startup: create tables immediately, seed in background. Shutdown: cleanup."""
+    print("[STARTUP] Initializing database...")
+    try:
+        await init_db()
+        print("[STARTUP] Database initialized OK")
+    except Exception as e:
+        print(f"[STARTUP] Database init FAILED: {e}")
+    print("[STARTUP] Starting background seed...")
+    try:
+        asyncio.create_task(seed_database())
+        print("[STARTUP] Background seed started")
+    except Exception as e:
+        print(f"[STARTUP] Background seed FAILED: {e}")
+    print("[STARTUP] App ready — binding to port")
     try:
         yield
     finally:
