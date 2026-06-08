@@ -1,6 +1,6 @@
 """Tests for intelligent chat context retrieval (PageIndex + embeddings + fallback)."""
 import pytest
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 from app.services.chat_context_service import ChatContextService, _cosine_similarity
 
 
@@ -85,7 +85,9 @@ async def test_build_context_no_tree_falls_back_to_clauses():
 
     mock_session.execute = AsyncMock(side_effect=[exec_contract, exec_tree, exec_embeddings, exec_clauses])
 
-    result = await service.build_context("c1", "termination clause", mock_session)
+    # Patch _get_embedding to avoid external API calls
+    with patch('app.services.chat_context_service._get_embedding', return_value=([0.1, 0.2], 'test')):
+        result = await service.build_context("c1", "termination clause", mock_session)
 
     assert result["method"] == "clauses"
     assert "TERMINATION" in result["text"]
