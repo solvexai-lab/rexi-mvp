@@ -46,8 +46,10 @@ class LegalPDF(FPDF):
             "ArialNR": "ArialNR",
             "arial_bold": "ArialNR",
         }
+        has_custom = False
         for name, path in FONT_PATHS.items():
             if os.path.exists(path):
+                has_custom = True
                 family = FONT_NAMES.get(name, name.split("_")[0])
                 style = ""
                 if "bold" in name and "italic" in name:
@@ -57,10 +59,17 @@ class LegalPDF(FPDF):
                 elif "italic" in name:
                     style = "I"
                 self.add_font(family, style, path)
+        if has_custom:
+            self._body_font = "TimesNR"
+            self._title_font = "ArialNR"
+        else:
+            # Fall back to fpdf2 core fonts on Linux/cloud
+            self._body_font = "Times"
+            self._title_font = "Helvetica"
 
     def header(self):
         if self.page_no() > 2:
-            self.set_font("TimesNR", "", 9)
+            self.set_font(self._body_font, "", 9)
             self.set_text_color(128, 128, 128)
             self.cell(0, 10, f"CONFIDENTIAL - {self.doc_title}", align="C", **_nx())
             self.ln(2)
@@ -68,49 +77,49 @@ class LegalPDF(FPDF):
     def footer(self):
         if self.page_no() > 1:
             self.set_y(-15)
-            self.set_font("TimesNR", "", 9)
+            self.set_font(self._body_font, "", 9)
             self.set_text_color(128, 128, 128)
             self.cell(0, 10, f"Page {self.page_no()}", align="C", **_nx())
 
     def title_page(self, title: str, party1: str, party2: str, date: str, contract_type: str):
         self.add_page()
-        self.set_font("ArialNR", "B", 24)
+        self.set_font(self._title_font, "B", 24)
         self.set_text_color(0, 0, 0)
         self.ln(40)
         self.cell(0, 15, title.upper(), align="C", **_nx())
-        self.set_font("ArialNR", "", 12)
+        self.set_font(self._title_font, "", 12)
         self.ln(10)
         self.cell(0, 10, f"Contract Type: {contract_type.replace('_', ' ').title()}", align="C", **_nx())
         self.ln(30)
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.cell(0, 10, "Between", align="C", **_nx())
         self.ln(5)
-        self.set_font("TimesNR", "B", 12)
+        self.set_font(self._body_font, "B", 12)
         self.cell(0, 10, party1, align="C", **_nx())
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.cell(0, 10, '(hereinafter referred to as the "Company")', align="C", **_nx())
         self.ln(5)
         self.cell(0, 10, "And", align="C", **_nx())
         self.ln(5)
-        self.set_font("TimesNR", "B", 12)
+        self.set_font(self._body_font, "B", 12)
         self.cell(0, 10, party2, align="C", **_nx())
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.cell(0, 10, '(hereinafter referred to as the "Counterparty")', align="C", **_nx())
         self.ln(30)
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.cell(0, 10, f"Dated: {date}", align="C", **_nx())
         self.ln(20)
-        self.set_font("TimesNR", "I", 9)
+        self.set_font(self._body_font, "I", 9)
         self.set_text_color(128, 128, 128)
         self.cell(0, 10, "This document contains confidential and proprietary information.", align="C", **_nx())
         self.cell(0, 10, "Unauthorized disclosure, copying, or distribution is strictly prohibited.", align="C", **_nx())
 
     def toc_page(self):
         self.add_page()
-        self.set_font("ArialNR", "B", 16)
+        self.set_font(self._title_font, "B", 16)
         self.cell(0, 15, "TABLE OF CONTENTS", align="C", **_nx())
         self.ln(5)
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         sections = [
             ("Article 1", "Definitions and Interpretation"),
             ("Article 2", "Scope and Purpose"),
@@ -133,31 +142,31 @@ class LegalPDF(FPDF):
             ("Exhibit I", "Signature Page and Execution Formalities"),
         ]
         for num, title in sections:
-            self.set_font("TimesNR", "B", 11)
+            self.set_font(self._body_font, "B", 11)
             self.cell(50, 8, num, new_x="RIGHT", new_y="TOP")
-            self.set_font("TimesNR", "", 11)
+            self.set_font(self._body_font, "", 11)
             self.cell(0, 8, title, **_nx())
             self.line(25.4, self.get_y(), 210 - 25.4, self.get_y())
             self.ln(2)
 
     def article_heading(self, number: str, title: str):
         self.ln(8)
-        self.set_font("ArialNR", "B", 13)
+        self.set_font(self._title_font, "B", 13)
         self.set_text_color(0, 0, 0)
         self.cell(0, 10, f"ARTICLE {number}", **_nx())
-        self.set_font("ArialNR", "B", 12)
+        self.set_font(self._title_font, "B", 12)
         self.cell(0, 8, title.upper(), **_nx())
         self.line(25.4, self.get_y(), 210 - 25.4, self.get_y())
         self.ln(4)
 
     def section_heading(self, number: str, title: str):
         self.ln(5)
-        self.set_font("TimesNR", "B", 11)
+        self.set_font(self._body_font, "B", 11)
         self.cell(0, 7, f"{number}.  {title}", **_nx())
         self.ln(1)
 
     def body_text(self, text: str, indent: bool = True):
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.set_text_color(0, 0, 0)
         if indent:
             self.set_x(35.4)
@@ -167,24 +176,24 @@ class LegalPDF(FPDF):
         self.ln(2)
 
     def numbered_para(self, number: int, text: str):
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.set_x(35.4)
         self.cell(10, 6, f"({number})", new_x="RIGHT", new_y="TOP")
         self.multi_cell(210 - 35.4 - 25.4 - 10, 6, text)
         self.ln(1)
 
     def bullet_para(self, text: str):
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.set_x(40.4)
         self.cell(8, 6, chr(149), new_x="RIGHT", new_y="TOP")
         self.multi_cell(210 - 40.4 - 25.4 - 8, 6, text)
         self.ln(1)
 
     def defined_term(self, term: str, definition: str):
-        self.set_font("TimesNR", "B", 11)
+        self.set_font(self._body_font, "B", 11)
         self.set_x(35.4)
         self.cell(0, 6, f'"{term}"', **_nx())
-        self.set_font("TimesNR", "", 11)
+        self.set_font(self._body_font, "", 11)
         self.set_x(40.4)
         self.multi_cell(210 - 40.4 - 25.4, 6, f"means {definition}")
         self.ln(2)
@@ -392,10 +401,10 @@ def generate_contract_pdf(contract_type: str, title: str, party1: str, party2: s
 
     # 3. Recitals / Preamble
     pdf.add_page()
-    pdf.set_font("ArialNR", "B", 14)
+    pdf.set_font(pdf._title_font, "B", 14)
     pdf.cell(0, 12, "RECITALS", align="C", **_nx())
     pdf.ln(5)
-    pdf.set_font("TimesNR", "", 11)
+    pdf.set_font(pdf._body_font, "", 11)
     recitals = [
         f"WHEREAS, {party1} (the 'Company') is a company incorporated under the laws of India, engaged in the business of manufacturing and technology services;",
         f"WHEREAS, {party2} (the 'Counterparty') is a company/person engaged in providing goods and/or services relevant to the Company's business operations;",
@@ -569,21 +578,21 @@ def generate_contract_pdf(contract_type: str, title: str, party1: str, party2: s
     # 19. Schedules
     for sched_title, sched_subtitle, items in _schedules():
         pdf.add_page()
-        pdf.set_font("ArialNR", "B", 14)
+        pdf.set_font(pdf._title_font, "B", 14)
         pdf.cell(0, 12, sched_title, align="C", **_nx())
-        pdf.set_font("ArialNR", "B", 12)
+        pdf.set_font(pdf._title_font, "B", 12)
         pdf.cell(0, 8, sched_subtitle, align="C", **_nx())
         pdf.line(25.4, pdf.get_y(), 210 - 25.4, pdf.get_y())
         pdf.ln(5)
-        pdf.set_font("TimesNR", "", 11)
+        pdf.set_font(pdf._body_font, "", 11)
         for item in items:
             if item.startswith("     "):
                 pdf.set_x(45.4)
                 pdf.multi_cell(210 - 45.4 - 25.4, 6, item.strip())
             elif item.startswith("SCHEDULE") or item.startswith("EXHIBIT"):
-                pdf.set_font("TimesNR", "B", 11)
+                pdf.set_font(pdf._body_font, "B", 11)
                 pdf.cell(0, 7, item, **_nx())
-                pdf.set_font("TimesNR", "", 11)
+                pdf.set_font(pdf._body_font, "", 11)
             else:
                 pdf.multi_cell(210 - 50.8, 6, item)
             pdf.ln(1)
@@ -591,13 +600,13 @@ def generate_contract_pdf(contract_type: str, title: str, party1: str, party2: s
     # 17. Signature Page
     for sched_title, sched_subtitle, items in _signature_page(party1, party2):
         pdf.add_page()
-        pdf.set_font("ArialNR", "B", 14)
+        pdf.set_font(pdf._title_font, "B", 14)
         pdf.cell(0, 12, sched_title, align="C", **_nx())
-        pdf.set_font("ArialNR", "B", 12)
+        pdf.set_font(pdf._title_font, "B", 12)
         pdf.cell(0, 8, sched_subtitle, align="C", **_nx())
         pdf.line(25.4, pdf.get_y(), 210 - 25.4, pdf.get_y())
         pdf.ln(10)
-        pdf.set_font("TimesNR", "", 11)
+        pdf.set_font(pdf._body_font, "", 11)
         for item in items:
             if item == "":
                 pdf.ln(4)
