@@ -28,7 +28,8 @@ COPY backend/ ./
 
 # Copy vendor modules (contractguard, legal_redline, etc.)
 COPY vendor/ ./vendor/
-ENV PYTHONPATH=/app/vendor
+# Each repo root must be on PYTHONPATH so nested packages are importable
+ENV PYTHONPATH=/app/vendor/contractguard:/app/vendor/legal-redline:/app/vendor/marker:/app/vendor/multi-agent-contract/apps/api:/app/vendor/graphrag-contract:/app/vendor/agentic-rag:/app/vendor/PageIndex
 
 # Copy built frontend from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
