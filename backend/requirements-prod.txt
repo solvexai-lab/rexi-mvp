@@ -1,0 +1,14 @@
+fastapi>=0.115
+uvicorn[standard]>=0.24
+python-multipart>=0.0.6
+pydantic-settings>=2.0
+sqlmodel>=0.0.22
+asyncpg>=0.30
+alembic>=1.13
+greenlet>=3.0
+httpx>=0.25
+pdfplumber>=0.10
+PyMuPDF>=1.23
+python-dotenv>=1.0
+numpy>=1.24
+google-generativeai>=0.8
