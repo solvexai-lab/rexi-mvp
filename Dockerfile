@@ -26,6 +26,10 @@ RUN pip install --no-cache-dir -r requirements-prod.txt
 # Copy backend code
 COPY backend/ ./
 
+# Copy vendor modules (contractguard, legal_redline, etc.)
+COPY vendor/ ./vendor/
+ENV PYTHONPATH=/app/vendor
+
 # Copy built frontend from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
